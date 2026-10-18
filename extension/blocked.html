@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bloqueado · Distraction Block</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="blocked.css">
+</head>
+<body>
+  <main class="stage">
+    <div class="target" aria-hidden="true">
+      <svg class="rings" viewBox="0 0 400 400">
+        <circle class="r r1" cx="200" cy="200" r="196" />
+        <circle class="r r2" cx="200" cy="200" r="172" />
+        <circle class="r r3" cx="200" cy="200" r="150" />
+        <g class="ticks">
+          <line x1="200" y1="0" x2="200" y2="22" /><line x1="200" y1="378" x2="200" y2="400" />
+          <line x1="0" y1="200" x2="22" y2="200" /><line x1="378" y1="200" x2="400" y2="200" />
+        </g>
+      </svg>
+      <div class="breath"></div>
+      <img class="mark" src="logo-white.png" alt="">
+    </div>
+
+    <p class="tag kind" id="kind">Acesso bloqueado</p>
+    <h1 id="title">Esse site está bloqueado.</h1>
+    <p class="target-name" id="target"></p>
+
+    <blockquote class="melhora" id="message"></blockquote>
+
+    <p class="breath-cue tag" id="breathCue">Respire</p>
+
+    <div class="actions">
+      <button class="btn primary" id="focusBtn">Voltar ao foco</button>
+      <button class="btn ghost" id="nextBtn">Outra mensagem</button>
+    </div>
+
+    <p class="foot">Para liberar, faça um pedido no Distraction Block. A liberação leva 7 dias.</p>
+  </main>
+  <script src="messages.js"></script>
+  <script src="blocked.js"></script>
+</body>
+</html>

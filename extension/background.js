@@ -1,0 +1,125 @@
+/*
+ * Distraction Block — extensão (service worker)
+ * - Recebe do site (rvazh.github.io/DistractionBlock) as listas de sites e palavras
+ * - Bloqueia sites com regras do declarativeNetRequest
+ * - Bloqueia pesquisas que contenham palavras proibidas
+ * - Guarda os bloqueios que aconteceram para o site mostrar no Painel
+ */
+importScripts('match.js', 'messages.js');
+
+const BLOCK_PAGE = chrome.runtime.getURL('blocked.html');
+const VERSION = chrome.runtime.getManifest().version;
+
+let config = null;
+const lastRedirect = new Map();
+
+function browserKey() {
+  const ua = navigator.userAgent || '';
+  if (/Edg\//.test(ua)) return 'edge';
+  if (/OPR\//.test(ua)) return 'opera';
+  if (navigator.brave) return 'brave';
+  return 'chrome';
+}
+
+async function getConfig() {
+  if (config) return config;
+  const { config: c } = await chrome.storage.local.get('config');
+  config = c || { sites: [], words: [], messages: [] };
+  return config;
+}
+
+/* ---------- Sites ---------- */
+let aplicando = Promise.resolve();
+function applySiteRules() {
+  // uma atualização por vez (evita regras com o mesmo id)
+  aplicando = aplicando.then(async () => {
+    const sites = ((await getConfig()).sites) || [];
+    const existing = await chrome.declarativeNetRequest.getDynamicRules();
+    const current = existing.map((r) => (r.condition.requestDomains || [])[0]).sort();
+    if (JSON.stringify(current) === JSON.stringify(sites.slice().sort())) return;
+    await chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: existing.map((r) => r.id),
+      addRules: sites.map((s, i) => ({
+        id: i + 1,
+        priority: 1,
+        action: { type: 'redirect', redirect: { url: `${BLOCK_PAGE}#t=site&v=${encodeURIComponent(s)}` } },
+        condition: { requestDomains: [s], resourceTypes: ['main_frame', 'sub_frame'] }
+      }))
+    });
+  }).catch((e) => console.warn('regras', e));
+  return aplicando;
+}
+
+/* ---------- Pesquisas ---------- */
+async function checkUrl(tabId, url, frameId) {
+  if (frameId !== 0 || tabId < 0 || !url || url.startsWith(BLOCK_PAGE)) return;
+  const c = await getConfig();
+  if (!c.words || !c.words.length) return;
+  const hit = DBMatch.blockedTermInUrl(url, c.words);
+  if (!hit) return;
+  const last = lastRedirect.get(tabId) || 0;
+  if (Date.now() - last < 1500) return;
+  lastRedirect.set(tabId, Date.now());
+  try {
+    await chrome.tabs.update(tabId, { url: `${BLOCK_PAGE}#t=word&v=${encodeURIComponent(hit.word)}` });
+  } catch (e) { /* aba fechada */ }
+  registrar('word', hit.word);
+}
+
+chrome.webNavigation.onBeforeNavigate.addListener((d) => checkUrl(d.tabId, d.url, d.frameId));
+chrome.webNavigation.onHistoryStateUpdated.addListener((d) => checkUrl(d.tabId, d.url, d.frameId));
+chrome.webNavigation.onReferenceFragmentUpdated.addListener((d) => checkUrl(d.tabId, d.url, d.frameId));
+chrome.tabs.onUpdated.addListener((tabId, info) => { if (info.url) checkUrl(tabId, info.url, 0); });
+chrome.tabs.onRemoved.addListener((tabId) => lastRedirect.delete(tabId));
+
+/* ---------- Bloqueios que aconteceram (o site busca para o Painel) ---------- */
+async function registrar(type, target) {
+  const { pending = [] } = await chrome.storage.local.get('pending');
+  pending.push({ type, target, t: Date.now() });
+  await chrome.storage.local.set({ pending: pending.slice(-500) });
+}
+
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg && msg.type === 'blocked' && msg.t === 'site') registrar('site', msg.v);
+});
+
+/* ---------- Conversa com o site ---------- */
+function lista(v, max) { return Array.isArray(v) ? v.slice(0, max).map(String) : []; }
+
+chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
+  (async () => {
+    if (!msg || typeof msg !== 'object') return sendResponse({ ok: false });
+
+    if (msg.type === 'ping') {
+      let incognito = false;
+      try { incognito = await chrome.extension.isAllowedIncognitoAccess(); } catch (e) { /* ignora */ }
+      await chrome.storage.local.set({ incognito, lastSeen: Date.now() });
+      return sendResponse({ ok: true, browser: browserKey(), incognito, version: VERSION });
+    }
+
+    if (msg.type === 'config') {
+      const c = msg.config || {};
+      config = {
+        sites: lista(c.sites, 5000).map((x) => DBMatch.normSite(x)).filter(Boolean),
+        words: lista(c.words, 2000).map((x) => x.slice(0, 80)),
+        messages: lista(c.messages, 500).map((x) => x.slice(0, 240))
+      };
+      await chrome.storage.local.set({ config, lastSync: Date.now() });
+      await applySiteRules();
+      return sendResponse({ ok: true });
+    }
+
+    if (msg.type === 'events') {
+      const { pending = [] } = await chrome.storage.local.get('pending');
+      await chrome.storage.local.set({ pending: [] });
+      return sendResponse({ events: pending });
+    }
+
+    sendResponse({ ok: false });
+  })();
+  return true; // resposta assíncrona
+});
+
+// Ao iniciar o navegador, reaplica a última lista recebida
+chrome.runtime.onStartup.addListener(() => applySiteRules());
+chrome.runtime.onInstalled.addListener(() => applySiteRules());

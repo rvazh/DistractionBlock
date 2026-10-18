@@ -1,0 +1,16 @@
+/* ===== Bloqueios ===== */
+.add-row { flex-wrap: wrap; }
+.add-row .input { min-width: 220px; }
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 3px; gap: 2px; background: var(--surface-2); height: 40px; box-sizing: border-box; }
+.seg button { border: 0; background: none; color: var(--muted); padding: 0 14px; border-radius: 2px; font-weight: 600; cursor: pointer; }
+.seg button:hover { color: var(--text); }
+.seg button.on { background: var(--white); color: #000; }
+.card-head.wrap { flex-wrap: wrap; align-items: center; }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.tabs button { height: 32px; padding: 0 12px; border-radius: 2px; border: 1px solid transparent; background: none; color: var(--muted); font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.tabs button:hover { color: var(--text); border-color: var(--line-strong); }
+.tabs button.on { color: var(--text); border-color: var(--white); }
+.tabs .n { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+.tabs button.on .n { color: var(--text); }
+.type-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+

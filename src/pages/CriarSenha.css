@@ -1,0 +1,15 @@
+/* ===== Criar senha (primeiro uso) ===== */
+.onboarding { position: fixed; inset: 0; overflow-y: auto; display: grid; place-items: center; padding: 32px; }
+.ob-card { width: min(520px, 100%); }
+.ob-logo { width: 88px; height: 88px; margin-bottom: 20px; }
+.ob-card h1 { font-size: 40px; line-height: 1.05; margin: 8px 0 12px; }
+.ob-lead { color: var(--muted); margin: 0 0 18px; }
+.ob-rules { margin: 0 0 26px; padding: 0; list-style: none; counter-reset: r; border: 1px solid var(--line); }
+.ob-rules li { counter-increment: r; padding: 12px 14px 12px 48px; position: relative; color: var(--muted); font-size: 13px; }
+.ob-rules li + li { border-top: 1px solid var(--line); }
+.ob-rules li::before { content: '0' counter(r); position: absolute; left: 14px; top: 12px; font-family: var(--mono); font-size: 11px; color: var(--dim); }
+.ob-rules b { color: var(--text); }
+.ob-form { display: grid; gap: 14px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted); cursor: pointer; }
+.check input { margin-top: 3px; accent-color: #fff; }
+

@@ -1,0 +1,84 @@
+/* Distraction Block — tema base (preto e branco, inspirado na logo) */
+@font-face { font-family: 'Chakra Petch'; font-weight: 400; font-display: swap; src: url('fonts/chakra-petch-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Chakra Petch'; font-weight: 500; font-display: swap; src: url('fonts/chakra-petch-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Chakra Petch'; font-weight: 600; font-display: swap; src: url('fonts/chakra-petch-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Chakra Petch'; font-weight: 700; font-display: swap; src: url('fonts/chakra-petch-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 400; font-display: swap; src: url('fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 500; font-display: swap; src: url('fonts/jetbrains-mono-latin-500-normal.woff2') format('woff2'); }
+
+:root {
+  --bg: #070707;
+  --surface: #0e0e0e;
+  --surface-2: #141414;
+  --surface-3: #1b1b1b;
+  --line: #242424;
+  --line-strong: #383838;
+  --text: #f3f3f3;
+  --muted: #8d8d8d;
+  --dim: #5c5c5c;
+  --white: #ffffff;
+  --alert: #ff4a3d;
+  --alert-soft: rgba(255, 74, 61, 0.12);
+  --font: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', Consolas, monospace;
+  --radius: 4px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border: 3px solid var(--bg); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dim); }
+::selection { background: var(--white); color: var(--bg); }
+
+/* Rótulo técnico em caixa alta, como marcações de mira */
+.tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 38px; padding: 0 16px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  border-radius: var(--radius);
+  font-weight: 600; letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.btn:hover { border-color: var(--white); }
+.btn:focus-visible, .input:focus-visible { outline: 2px solid var(--white); outline-offset: 2px; }
+.btn.primary { background: var(--white); color: #000; border-color: var(--white); }
+.btn.primary:hover { background: #d9d9d9; }
+.btn.danger { border-color: rgba(255,74,61,.5); color: var(--alert); }
+.btn.danger:hover { background: var(--alert-soft); border-color: var(--alert); }
+.btn.ghost { border-color: transparent; color: var(--muted); }
+.btn.ghost:hover { color: var(--text); border-color: var(--line-strong); }
+.btn.sm { height: 30px; padding: 0 12px; font-size: 13px; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+.input {
+  height: 40px; width: 100%;
+  padding: 0 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  outline: none;
+}
+.input::placeholder { color: var(--dim); }
+.input:focus { border-color: var(--white); }
