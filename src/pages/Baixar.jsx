@@ -26,7 +26,7 @@ export default function Baixar() {
           <span className="s-rotulo">Requisitos</span>
           <div><span>Navegador</span><b>Chrome, Edge, Brave ou Opera</b></div>
           <div><span>Aparelho</span><b>Computador</b></div>
-          <div><span>Conta</span><b>Nenhuma</b></div>
+          <div><span>Conta</span><b>Local, sem servidor</b></div>
         </div>
       </section>
 
@@ -60,11 +60,11 @@ export default function Baixar() {
         <div className="baixar-cartao s-escuro">
           <div className="baixar-cartao-texto">
             <span className="baixar-numero invertido">02</span>
-            <h2>Abra o painel e crie sua senha</h2>
-            <p className="s-texto">No painel você vê os bloqueios do dia e as regras. Crie a senha de controle em Ajustes: é ela que confirma cada liberação, depois dos 7 dias.</p>
+            <h2>Crie a sua conta e entre no painel</h2>
+            <p className="s-texto">Nome, e-mail e senha. A senha é a mesma que confirma cada liberação, depois dos 7 dias. A conta fica só neste navegador.</p>
             <p className="s-texto">Quer o painel numa janela própria? Em Ajustes, clique em <b>Instalar o Distraction Block</b>.</p>
             <div className="baixar-botoes">
-              <Link className="sbtn sbtn-branco grande" to="/painel">Abrir o painel</Link>
+              <Link className="sbtn sbtn-branco grande" to="/cadastro">Criar conta</Link>
             </div>
           </div>
           <figure className="s-tela baixar-imagem">

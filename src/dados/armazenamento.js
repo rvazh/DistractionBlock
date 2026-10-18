@@ -6,6 +6,7 @@ import { MENSAGENS } from './compartilhado.js';
 import { pingExtensao, enviarListas, buscarBloqueios } from './extensao.js';
 
 const CHAVE = 'distraction-block:v1';
+const CHAVE_SESSAO = 'distraction-block:sessao'; // fica no localStorage ("manter conectado") ou no sessionStorage
 const NAVEGADORES = { chrome: 'Google Chrome', edge: 'Microsoft Edge', brave: 'Brave', opera: 'Opera' };
 
 function carregar() {
@@ -28,9 +29,44 @@ function salvar() {
   }
 }
 
+// ===== Sessão (quem está com o painel aberto neste navegador) =====
+function lerSessao() {
+  try {
+    return sessionStorage.getItem(CHAVE_SESSAO) || localStorage.getItem(CHAVE_SESSAO);
+  } catch {
+    return null;
+  }
+}
+
+export function estaLogado() {
+  return Boolean(estado.passwordHash && estado.sessionId && lerSessao() === estado.sessionId);
+}
+
+function abrirSessao(manter) {
+  const id = Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, '0')).join('');
+  estado.sessionId = id;
+  try {
+    sessionStorage.removeItem(CHAVE_SESSAO);
+    localStorage.removeItem(CHAVE_SESSAO);
+    (manter ? localStorage : sessionStorage).setItem(CHAVE_SESSAO, id);
+  } catch {
+    /* sem armazenamento: a sessão dura até recarregar */
+  }
+}
+
+function fecharSessao() {
+  try {
+    sessionStorage.removeItem(CHAVE_SESSAO);
+    localStorage.removeItem(CHAVE_SESSAO);
+  } catch {
+    /* ignora */
+  }
+}
+
 // O que as telas recebem (sem o hash da senha nem os códigos)
 export function retrato() {
   return R.publicState(estado, {
+    logado: estaLogado(),
     extensao,
     mensagensPadrao: MENSAGENS,
   });
@@ -88,6 +124,7 @@ if (typeof window !== 'undefined') {
       estado = R.migrate(carregar());
       avisar();
     }
+    if (e.key === CHAVE_SESSAO) avisar(); // entrou ou saiu em outra aba
   });
   setTimeout(sincronizar, 300);
 }
@@ -99,15 +136,32 @@ function exigirSenha(s) {
 
 // ===== Ações usadas pelas telas =====
 export const acoes = {
-  async criarSenha(senha) {
-    await mudar(async (s) => {
-      if (s.passwordHash) throw new Error('A senha já foi criada.');
-      const erro = R.validateNewPassword(senha);
-      if (erro) throw new Error(erro);
-      s.passwordHash = await R.hashPassword(senha);
-      s.createdAt = Date.now();
-    });
+  // Conta e login
+  criarConta: (dados, manter) =>
+    mudar(async (s) => {
+      const primeiraVez = !s.passwordHash;
+      await R.createAccount(s, dados);
+      if (primeiraVez) s.createdAt = Date.now();
+      abrirSessao(manter);
+    }),
+  async entrar(email, senha, manter) {
+    try {
+      await R.login(estado, { email, password: senha });
+    } catch (e) {
+      salvar(); // guarda a contagem de tentativas erradas
+      throw e;
+    }
+    abrirSessao(manter);
+    salvar();
+    avisar();
+    mandarListas();
   },
+  sair() {
+    fecharSessao();
+    avisar();
+  },
+  atualizarConta: (dados) => mudar((s) => R.updateAccount(s, dados)),
+
   trocarSenha: (atual, nova) =>
     mudar(async (s) => {
       if (!(await R.verifyPassword(atual, s.passwordHash))) throw new Error('Senha atual incorreta.');

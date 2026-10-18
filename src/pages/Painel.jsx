@@ -7,9 +7,10 @@ import './Painel.css';
 
 const DIAS_DA_SEMANA = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 
-function saudacao() {
+function saudacao(nome) {
   const h = new Date().getHours();
-  return h < 12 ? 'Bom dia, Ryan.' : h < 18 ? 'Boa tarde, Ryan.' : 'Boa noite, Ryan.';
+  const quem = nome ? `, ${nome.split(' ')[0]}` : '';
+  return (h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite') + quem + '.';
 }
 
 function Status({ estado, titulo, texto, children }) {
@@ -35,13 +36,13 @@ export default function Painel() {
 
   return (
     <section className="page">
-      <PageHead tag="Painel" title={saudacao()} desc="Tudo o que tentou roubar a sua atenção, e o que você escolheu no lugar." />
+      <PageHead tag="Painel" title={saudacao(S.account && S.account.name)} desc="Tudo o que tentou roubar a sua atenção, e o que você escolheu no lugar." />
 
-      {!S.hasPassword && (
+      {!S.account && (
         <div className="banner">
-          <span className="tag">Falta a senha</span>
-          <span>Crie a sua senha de controle para que qualquer liberação siga a regra dos 7 dias.</span>
-          <Link className="btn sm" to="/painel/ajustes">Criar senha</Link>
+          <span className="tag">Minha conta</span>
+          <span>Adicione o seu nome e e-mail à conta.</span>
+          <Link className="btn sm" to="/painel/ajustes">Completar</Link>
         </div>
       )}
 

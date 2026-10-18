@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEstado } from '../contexto/Estado.jsx';
 import logo from '../assets/logo-branca.png';
 import './MenuLateral.css';
@@ -14,8 +14,14 @@ const MENU = [
 
 // Menu à esquerda (no celular vira uma barra no topo) + a tela aberta no lado direito
 export default function MenuLateral() {
-  const { S } = useEstado();
+  const { S, acoes } = useEstado();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  function sair() {
+    acoes.sair();
+    navigate('/entrar', { replace: true });
+  }
 
   // Ao trocar de tela, volta para o topo
   useEffect(() => {
@@ -47,9 +53,13 @@ export default function MenuLateral() {
           ))}
         </nav>
         <div className="side-status">
-          <div className="row">
-            <span className={'dot ' + (S.hasPassword ? 'on' : 'warn')} />
-            {S.hasPassword ? 'Senha criada' : 'Senha não criada'}
+          <div className="side-conta">
+            <span className="side-avatar">{(S.account ? S.account.name : 'R').trim()[0].toUpperCase()}</span>
+            <div className="side-conta-txt">
+              <b>{S.account ? S.account.name : 'Minha conta'}</b>
+              <span>{S.account ? S.account.email : 'Complete em Ajustes'}</span>
+            </div>
+            <button type="button" className="side-sair" onClick={sair}>Sair</button>
           </div>
           <div className="row">
             <span className={'dot ' + (S.extensao ? 'on' : 'warn')} />

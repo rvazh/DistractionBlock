@@ -12,9 +12,11 @@ e instalável como app. Quem bloqueia de verdade é a **extensão do navegador**
 |---|---|
 | `#/` | Site de apresentação (Início) |
 | `#/baixar` | Baixar e instalar (extensão, painel, primeiro bloqueio) |
-| `#/painel` | Painel do app (Bloqueios, Liberações, Mensagens e Ajustes ficam em `#/painel/...`) |
+| `#/entrar` | Login (e-mail e senha) |
+| `#/cadastro` | Criar conta (nome, e-mail e senha) |
+| `#/painel` | Painel do app, só com login (Bloqueios, Liberações, Mensagens e Ajustes ficam em `#/painel/...`) |
 
-A senha de controle é criada em **Painel › Ajustes**. Ela só é exigida para pedir uma liberação.
+No primeiro acesso você cria a conta; depois entra com e-mail e senha. A senha do login é a mesma que confirma cada liberação. A conta fica só neste navegador (sem servidor), 5 senhas erradas travam o login por 5 minutos e não existe recuperação de senha, de propósito.
 
 ## Regra principal
 
@@ -76,7 +78,7 @@ Se publicar em outro endereço (ex.: Vercel), adicione-o em `externally_connecta
 
 ## Limites desta versão
 
-- Os dados ficam no navegador: limpar os dados do site apaga as listas e a senha.
+- Os dados ficam no navegador: limpar os dados do site apaga a conta, as listas e a senha.
 - Bloqueio de apps do Windows (Discord, Steam…) ainda não existe: um site não consegue fechar programas.
 - Na pessoa de confiança, os códigos passam pelo seu e-mail uma vez, na hora do cadastro. A versão com link de aprovação precisa de servidor (Supabase + Brevo).
 

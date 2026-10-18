@@ -53,7 +53,7 @@ const DUVIDAS = [
   ['Por que esperar 7 dias para liberar?', 'Porque a vontade de se distrair dura minutos. Se uma semana depois você ainda quiser liberar, provavelmente é uma decisão de verdade, e não um impulso.'],
   ['E se eu esquecer a senha?', 'Não existe recuperação, para que ninguém (nem você num momento de fraqueza) consiga contornar o bloqueio. Guarde a senha em um lugar seguro.'],
   ['Funciona em quais navegadores?', 'Chrome, Edge, Brave e Opera no computador, com a extensão do Distraction Block instalada.'],
-  ['Meus dados vão para algum servidor?', 'Não. Listas, senha e histórico ficam só no seu navegador. O site conversa apenas com a extensão instalada nele.'],
+  ['Meus dados vão para algum servidor?', 'Não. A conta, as listas, a senha e o histórico ficam só no seu navegador. O site conversa apenas com a extensão instalada nele.'],
   ['Bloqueia apps do Windows, como Discord e Steam?', 'Ainda não. Fechar programas precisa de um app instalado no Windows, que é a próxima etapa do projeto.'],
   ['Tem versão para celular?', 'Dá para abrir o painel no celular, mas o bloqueio depende da extensão do navegador no computador. A versão para Android está nos próximos passos.'],
 ];

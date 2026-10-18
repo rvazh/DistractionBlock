@@ -80,3 +80,34 @@ test('mensagens padrão podem ser desligadas', () => {
   s.disabledDefaults = ['a', 'b'];
   assert.deepEqual(R.activeMessages(s, ['a', 'b']), ['a', 'b']);
 });
+
+test('criar conta e entrar', async () => {
+  const s = R.defaultState();
+  await assert.rejects(R.createAccount(s, { name: 'R', email: 'r@x.com', password: 'segredo1' }), /nome/);
+  await assert.rejects(R.createAccount(s, { name: 'Ryan', email: 'ryan', password: 'segredo1' }), /E-mail/);
+  await assert.rejects(R.createAccount(s, { name: 'Ryan', email: 'r@x.com', password: '123' }), /6 caracteres/);
+  await R.createAccount(s, { name: 'Ryan', email: 'R@X.com', password: 'segredo1' });
+  assert.equal(s.account.email, 'r@x.com');
+  assert.ok(s.passwordHash);
+  await assert.rejects(R.createAccount(s, { name: 'Outro', email: 'o@x.com', password: 'segredo1' }), /Já existe/);
+  assert.equal(await R.login(s, { email: 'r@x.com', password: 'segredo1' }), true);
+  await assert.rejects(R.login(s, { email: 'r@x.com', password: 'errada' }), /incorretos/);
+  await assert.rejects(R.login(s, { email: 'outro@x.com', password: 'segredo1' }), /incorretos/);
+});
+
+test('5 tentativas erradas bloqueiam o login por 5 minutos', async () => {
+  const s = R.defaultState();
+  await R.createAccount(s, { name: 'Ryan', email: 'r@x.com', password: 'segredo1' }, 0);
+  for (let i = 0; i < 4; i++) await assert.rejects(R.login(s, { email: 'r@x.com', password: 'x' }, 1000), /incorretos/);
+  await assert.rejects(R.login(s, { email: 'r@x.com', password: 'x' }, 1000), /Muitas tentativas/);
+  await assert.rejects(R.login(s, { email: 'r@x.com', password: 'segredo1' }, 2000), /Tente de novo em 5 minutos/);
+  assert.equal(await R.login(s, { email: 'r@x.com', password: 'segredo1' }, 1000 + 5 * 60 * 1000 + 1), true);
+});
+
+test('conta criada depois de já existir senha usa a mesma senha', async () => {
+  const s = R.defaultState();
+  s.passwordHash = await R.hashPassword('antiga1');
+  await assert.rejects(R.createAccount(s, { name: 'Ryan', email: 'r@x.com', password: 'nova123' }), /senha de controle/);
+  await R.createAccount(s, { name: 'Ryan', email: 'r@x.com', password: 'antiga1' });
+  assert.ok(s.account);
+});

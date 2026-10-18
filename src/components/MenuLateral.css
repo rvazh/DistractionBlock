@@ -39,3 +39,16 @@
 
 .nav a { text-decoration: none; }
 a.brand { text-decoration: none; color: inherit; }
+
+/* Conta logada e botão Sair */
+.side-conta { display: flex; align-items: center; gap: 10px; padding-bottom: 6px; }
+.side-avatar { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--white); color: #000; display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+.side-conta-txt { flex: 1; min-width: 0; display: grid; line-height: 1.25; }
+.side-conta-txt b { font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-conta-txt span { font-size: 11px; color: var(--dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-sair { background: none; border: 1px solid var(--line-strong); color: var(--muted); border-radius: var(--radius); font-size: 12px; padding: 4px 10px; cursor: pointer; }
+.side-sair:hover { color: var(--text); border-color: var(--white); }
+@media (max-width: 760px) {
+  .side-status { display: grid !important; padding: 10px 0 0; border-top: 0; }
+  .side-status .row { display: none; }
+}

@@ -28,6 +28,9 @@ export function defaultState(now = Date.now()) {
     version: 1,
     createdAt: now,
     passwordHash: null,
+    account: null,       // { name, email, createdAt }
+    loginLock: null,     // { fails, until } — tentativas erradas de entrar
+    sessionId: null,     // muda a cada login; a sessão aberta guarda o mesmo valor
     lists: { sites: [], words: [] },
     customMessages: [],
     disabledDefaults: [],
@@ -45,6 +48,7 @@ export function migrate(raw, now = Date.now()) {
   for (const l of LISTS) if (raw.lists && Array.isArray(raw.lists[l])) s.lists[l] = raw.lists[l];
   for (const k of ['customMessages', 'disabledDefaults', 'requests', 'events']) if (!Array.isArray(s[k])) s[k] = [];
   if (!s.trusted || typeof s.trusted !== 'object') s.trusted = null;
+  if (!s.account || typeof s.account !== 'object') s.account = null;
   return s;
 }
 
@@ -70,6 +74,66 @@ export async function verifyPassword(pw, stored) {
 export function validateNewPassword(pw) {
   if (typeof pw !== 'string' || pw.length < 6) return 'A senha precisa ter pelo menos 6 caracteres.';
   return null;
+}
+
+/* ---------- Conta e login (neste navegador) ----------
+ * A senha da conta é a mesma senha de controle que confirma as liberações.
+ * Não existe recuperação de senha: é de propósito.
+ */
+const MAX_TENTATIVAS = 5;
+const ESPERA_LOGIN_MS = 5 * 60 * 1000;
+
+function normEmail(e) { return String(e || '').trim().toLowerCase(); }
+
+export async function createAccount(state, info, now = Date.now()) {
+  if (state.account) throw new Error('Já existe uma conta neste navegador. Use Entrar.');
+  const name = String((info && info.name) || '').trim().slice(0, 60);
+  const email = normEmail(info && info.email);
+  const password = String((info && info.password) || '');
+  if (name.length < 2) throw new Error('Informe o seu nome.');
+  if (!validEmail(email)) throw new Error('E-mail inválido.');
+  if (state.passwordHash) {
+    // Versão anterior já tinha senha de controle: a conta usa a mesma senha
+    if (!(await verifyPassword(password, state.passwordHash))) throw new Error('Use a senha de controle que você já tinha criado.');
+  } else {
+    const err = validateNewPassword(password);
+    if (err) throw new Error(err);
+    state.passwordHash = await hashPassword(password);
+  }
+  state.account = { name, email, createdAt: now };
+  state.loginLock = null;
+  return state.account;
+}
+
+export async function login(state, info, now = Date.now()) {
+  if (!state.passwordHash) throw new Error('Crie a sua conta primeiro.');
+  const lock = state.loginLock;
+  if (lock && lock.until && now < lock.until) {
+    const min = Math.ceil((lock.until - now) / 60000);
+    throw new Error(`Muitas tentativas erradas. Tente de novo em ${min} ${min === 1 ? 'minuto' : 'minutos'}.`);
+  }
+  const emailOk = !state.account || normEmail(info && info.email) === state.account.email;
+  const senhaOk = await verifyPassword(String((info && info.password) || ''), state.passwordHash);
+  if (!emailOk || !senhaOk) {
+    const fails = ((lock && !lock.until ? lock.fails : 0) || 0) + 1;
+    state.loginLock = fails >= MAX_TENTATIVAS ? { fails: 0, until: now + ESPERA_LOGIN_MS } : { fails, until: null };
+    const restam = MAX_TENTATIVAS - fails;
+    throw new Error(fails >= MAX_TENTATIVAS
+      ? 'Muitas tentativas erradas. Tente de novo em 5 minutos.'
+      : `E-mail ou senha incorretos.${restam <= 2 ? ` Restam ${restam} ${restam === 1 ? 'tentativa' : 'tentativas'}.` : ''}`);
+  }
+  state.loginLock = null;
+  return true;
+}
+
+export function updateAccount(state, info) {
+  if (!state.account) throw new Error('Não há conta neste navegador.');
+  const name = String((info && info.name) || '').trim().slice(0, 60);
+  const email = normEmail(info && info.email);
+  if (name.length < 2) throw new Error('Informe o seu nome.');
+  if (!validEmail(email)) throw new Error('E-mail inválido.');
+  state.account = { ...state.account, name, email };
+  return state.account;
 }
 
 /* ---------- Normalização ---------- */
@@ -302,6 +366,7 @@ export function stats(state, now = Date.now()) {
 export function publicState(state, extra = {}, now = Date.now()) {
   return {
     hasPassword: !!state.passwordHash,
+    account: state.account ? { name: state.account.name, email: state.account.email, createdAt: state.account.createdAt } : null,
     lists: state.lists,
     customMessages: state.customMessages,
     disabledDefaults: state.disabledDefaults,

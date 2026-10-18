@@ -1,6 +1,7 @@
 // Cabeçalho do site (Início e Baixar): logo, atalhos para as seções e botões
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo-branca.png';
+import { useEstado } from '../contexto/Estado.jsx';
 import './Header.css';
 
 const SECOES = [
@@ -12,6 +13,8 @@ const SECOES = [
 
 export default function Header() {
   const navigate = useNavigate();
+  const { S } = useEstado();
+  const botao = S.logado ? 'Abrir o painel' : S.hasPassword ? 'Entrar' : 'Criar conta';
   // As seções ficam na página Início; o HashRouter usa o # da URL, então a rolagem é feita pelo React
   const irPara = (id) => navigate('/', { state: { secao: id } });
 
@@ -29,7 +32,7 @@ export default function Header() {
         </div>
         <div className="site-acoes">
           <Link className="sbtn sbtn-linha esconder-celular" to="/baixar">Instalar extensão</Link>
-          <Link className="sbtn sbtn-escuro" to="/painel">Abrir o painel</Link>
+          <Link className="sbtn sbtn-escuro" to="/painel">{botao}</Link>
         </div>
       </nav>
     </header>
