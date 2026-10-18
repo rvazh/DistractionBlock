@@ -79,7 +79,6 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .input:focus { border-color: var(--white); }
 
 /* ===== Estrutura ===== */
-body { overflow: hidden; }
 [hidden] { display: none !important; }
 
 
@@ -197,7 +196,7 @@ body { overflow: hidden; }
 /* ===== Peças comuns ===== */
 a.btn { text-decoration: none; color: inherit; }
 a.btn.primary { color: #000; }
-.banner { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; border: 1px dashed var(--line-strong); padding: 12px 16px; margin: -8px 0 20px; color: var(--muted); font-size: 13px; }
+.banner { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; border: 1px dashed var(--line-strong); padding: 12px 16px; margin: -8px 0 20px; color: var(--muted); font-size: 13px; }
 .banner .tag { color: var(--text); }
 .warn-note { color: var(--text); }
 .table-box { overflow-x: auto; }
@@ -205,7 +204,6 @@ a.btn.primary { color: #000; }
 
 /* Telas estreitas (celular): menu vira uma barra no topo */
 @media (max-width: 760px) {
-  body { overflow: auto; }
   .shell { position: static; display: block; }
   .sidebar { border-right: 0; border-bottom: 1px solid var(--line); padding: 14px 16px; }
   .brand { padding: 0 0 12px; }
@@ -227,7 +225,6 @@ a.btn.primary { color: #000; }
   .code-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .req { grid-template-columns: 1fr; }
   .check-actions { margin-left: 0; }
-  .onboarding { padding: 24px 16px; }
   .events li { grid-template-columns: 52px 84px 1fr; }
 }
 
@@ -241,3 +238,8 @@ a.btn.primary { color: #000; }
   .card { padding: 18px; }
   .toasts { left: 16px; right: 16px; }
 }
+
+/* Formulário com caixa de confirmação */
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted); cursor: pointer; }
+.check input { margin-top: 3px; accent-color: #fff; }
+.banner .btn { margin-left: auto; }

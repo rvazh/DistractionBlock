@@ -38,3 +38,4 @@
 @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,.45); } 70% { box-shadow: 0 0 0 7px rgba(255,255,255,0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
 
 .nav a { text-decoration: none; }
+a.brand { text-decoration: none; color: inherit; }

@@ -99,7 +99,7 @@ function SemPedidos() {
   return (
     <Modal tag="Solicitar permissão" title="Nenhum pedido aguardando aprovação"
       actions={<>
-        <BotaoModal kind="primary" onClick={() => navigate('/bloqueios')}>Ir para Bloqueios</BotaoModal>
+        <BotaoModal kind="primary" onClick={() => navigate('/painel/bloqueios')}>Ir para Bloqueios</BotaoModal>
         <BotaoModal kind="ghost">Fechar</BotaoModal>
       </>}>
       <p>Primeiro peça a liberação de algo em Bloqueios. Depois volte aqui para pedir a permissão.</p>

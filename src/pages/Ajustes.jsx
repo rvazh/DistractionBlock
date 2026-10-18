@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useEstado } from '../contexto/Estado.jsx';
 import { useUI } from '../contexto/UI.jsx';
 import { PageHead } from '../components/Pecas.jsx';
+import CriarSenha from '../components/CriarSenha.jsx';
 import { abertoComoApp, aparelhoAtual, instalarApp, podeInstalar } from '../dados/instalar.js';
 import { REPO_URL } from '../config.js';
 import './Ajustes.css';
@@ -96,7 +97,8 @@ export default function Ajustes() {
 
       <div className="grid g-2" style={{ marginTop: 16 }}>
         <InstalarApp />
-        <div className="card">
+        {!S.hasPassword ? <CriarSenha /> : (
+        <div className="card" id="senha">
           <h2>Trocar senha</h2>
           <p className="sub">Não existe recuperação. Guarde a nova senha em lugar seguro.</p>
           <form className="form-grid" onSubmit={trocarSenha}>
@@ -106,6 +108,7 @@ export default function Ajustes() {
             <p className="form-error">{erro}</p>
           </form>
         </div>
+        )}
       </div>
 
       <div className="grid g-2" style={{ marginTop: 16 }}>
@@ -119,7 +122,7 @@ export default function Ajustes() {
               ? `${S.trusted.name} precisa aprovar cada liberação. Se negar, uma nova tentativa só depois de mais ${S.delayDays} dias.`
               : 'Alguém que precisa concordar antes de qualquer liberação. Se negar, uma nova tentativa só depois de mais 7 dias.'}
           </p>
-          <Link className="btn" to="/liberacoes">{S.trusted ? 'Ver em Liberações' : 'Adicionar em Liberações'}</Link>
+          <Link className="btn" to="/painel/liberacoes">{S.trusted ? 'Ver em Liberações' : 'Adicionar em Liberações'}</Link>
         </div>
         <div className="card soon">
           <div className="card-head">

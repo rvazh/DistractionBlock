@@ -37,6 +37,14 @@ export default function Painel() {
     <section className="page">
       <PageHead tag="Painel" title={saudacao()} desc="Tudo o que tentou roubar a sua atenção, e o que você escolheu no lugar." />
 
+      {!S.hasPassword && (
+        <div className="banner">
+          <span className="tag">Falta a senha</span>
+          <span>Crie a sua senha de controle para que qualquer liberação siga a regra dos 7 dias.</span>
+          <Link className="btn sm" to="/painel/ajustes">Criar senha</Link>
+        </div>
+      )}
+
       <div className="grid g-dash">
         <div className="card frame hero">
           <Reticulo valor={st.today} rotulo="bloqueios hoje" />
@@ -57,14 +65,14 @@ export default function Painel() {
             titulo="Extensão do navegador"
             texto={ext ? `${ext.nome}${ext.incognito ? '' : ' (sem modo anônimo)'}` : 'Sites e pesquisas não estão sendo bloqueados.'}
           >
-            {!ext && <Link className="btn sm" to="/ajustes">Instalar</Link>}
+            {!ext && <Link className="btn sm" to="/painel/ajustes">Instalar</Link>}
           </Status>
           <Status
             estado={true}
             titulo="Bloqueios ativos"
             texto={`${plural(S.lists.sites.length, 'site', 'sites')} · ${plural(S.lists.words.length, 'palavra', 'palavras')}`}
           >
-            <Link className="btn sm ghost" to="/bloqueios">Ver</Link>
+            <Link className="btn sm ghost" to="/painel/bloqueios">Ver</Link>
           </Status>
           <Status
             estado={S.trusted ? true : ''}
@@ -76,7 +84,7 @@ export default function Painel() {
             titulo="Liberações abertas"
             texto={abertos.length ? plural(abertos.length, 'pedido aguardando', 'pedidos aguardando') : 'Nenhum pedido em andamento.'}
           >
-            {abertos.length > 0 && <Link className="btn sm" to="/liberacoes">Ver</Link>}
+            {abertos.length > 0 && <Link className="btn sm" to="/painel/liberacoes">Ver</Link>}
           </Status>
         </div>
       </div>

@@ -3,7 +3,7 @@
   "short_name": "Distraction Block",
   "description": "Bloqueie sites e pesquisas que roubam o seu tempo.",
   "lang": "pt-BR",
-  "start_url": "./#/",
+  "start_url": "./#/painel",
   "scope": "./",
   "display": "standalone",
   "background_color": "#070707",

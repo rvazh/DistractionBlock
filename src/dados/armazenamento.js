@@ -47,7 +47,6 @@ export function ouvir(fn) {
 }
 
 function mandarListas() {
-  if (!estado.passwordHash) return;
   enviarListas({
     sites: estado.lists.sites.map((i) => i.value),
     words: estado.lists.words.map((i) => i.value),
@@ -93,6 +92,11 @@ if (typeof window !== 'undefined') {
   setTimeout(sincronizar, 300);
 }
 
+// Liberar qualquer coisa só depois de existir a senha de controle
+function exigirSenha(s) {
+  if (!s.passwordHash) throw new Error('Crie a sua senha de controle em Ajustes antes de pedir uma liberação.');
+}
+
 // ===== Ações usadas pelas telas =====
 export const acoes = {
   async criarSenha(senha) {
@@ -113,12 +117,12 @@ export const acoes = {
     }),
 
   bloquear: (lista, valor) => mudar((s) => R.addItem(s, lista, valor)),
-  pedirLiberacao: (lista, valor) => mudar((s) => R.requestRemoval(s, lista, valor)),
+  pedirLiberacao: (lista, valor) => mudar((s) => { exigirSenha(s); return R.requestRemoval(s, lista, valor); }),
   desistir: (id) => mudar((s) => R.cancelRequest(s, id)),
   liberar: (id, senha) => mudar((s) => R.applyRequest(s, id, senha)),
 
   adicionarPessoa: (dados) => mudar((s) => R.setTrusted(s, dados)),
-  pedirRemocaoPessoa: () => mudar((s) => R.requestTrustedRemoval(s)),
+  pedirRemocaoPessoa: () => mudar((s) => { exigirSenha(s); return R.requestTrustedRemoval(s); }),
   solicitarPermissao: (id) => mudar((s) => R.askApproval(s, id)),
   aprovarComCodigo: (id, codigo) => mudar((s) => R.approveWithCode(s, id, codigo)),
   registrarNegacao: (id) => mudar((s) => R.denyRequest(s, id)),

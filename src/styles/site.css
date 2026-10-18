@@ -1,0 +1,64 @@
+/* ===== Site de apresentação (Início e Baixar) =====
+   Fundo claro com blocos pretos, como a logo em preto e branco.
+   O painel do app continua escuro (global.css). */
+:root {
+  --s-papel: #f3f3f1;
+  --s-tinta: #0a0a0a;
+  --s-tinta-suave: #3a3a36;
+  --s-cinza: #55554f;
+  --s-linha: #dadad5;
+  --s-branco: #ffffff;
+  --s-claro-escuro: #c9c9c9; /* texto secundário sobre preto */
+}
+
+.site {
+  background: var(--s-papel);
+  color: var(--s-tinta);
+  min-height: 100vh;
+  font-family: var(--font);
+  font-size: 16px;
+}
+.site ::selection { background: var(--s-tinta); color: var(--s-branco); }
+
+.s-conteudo { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+/* Rótulo pequeno em caixa alta */
+.s-rotulo {
+  margin: 0 0 14px;
+  font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--s-cinza); font-weight: 500;
+}
+.s-titulo { margin: 0; font-size: clamp(34px, 4vw, 52px); line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }
+.s-texto { margin: 0; font-size: 18px; line-height: 1.55; color: var(--s-tinta-suave); }
+
+/* Botões do site */
+.sbtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 48px; padding: 0 22px; border-radius: 10px;
+  font-weight: 600; font-size: 16px; text-decoration: none; cursor: pointer;
+  border: 1px solid transparent; font-family: inherit;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.sbtn.grande { min-height: 56px; padding: 0 28px; font-size: 17px; }
+.sbtn-escuro { background: var(--s-tinta); color: var(--s-branco); border-color: var(--s-tinta); }
+.sbtn-escuro:hover { background: #2a2a2a; }
+.sbtn-linha { background: var(--s-branco); color: var(--s-tinta); border-color: #cfcfc9; }
+.sbtn-linha:hover { border-color: var(--s-tinta); }
+.sbtn-branco { background: var(--s-branco); color: var(--s-tinta); border-color: var(--s-branco); }
+.sbtn-branco:hover { background: var(--s-linha); }
+.sbtn-fantasma { background: transparent; color: var(--s-branco); border-color: rgba(255, 255, 255, 0.35); }
+.sbtn-fantasma:hover { border-color: var(--s-branco); }
+.sbtn:focus-visible, .site-link:focus-visible { outline: 2px solid var(--s-tinta); outline-offset: 3px; }
+.s-escuro .sbtn:focus-visible { outline-color: var(--s-branco); }
+
+/* Blocos pretos arredondados */
+.s-escuro { background: var(--s-tinta); color: var(--s-branco); }
+.s-escuro .s-rotulo { color: #a3a3a3; }
+.s-escuro .s-texto { color: var(--s-claro-escuro); }
+
+/* Moldura das capturas de tela */
+.s-tela { margin: 0; }
+.s-tela-moldura { border-radius: 16px; overflow: hidden; border: 1px solid #2e2e2e; }
+.s-tela-moldura img { display: block; width: 100%; height: auto; }
+.s-tela figcaption { margin-top: 14px; font-size: 17px; color: #e4e4e4; }
+.s-tela figcaption span { color: #a3a3a3; }

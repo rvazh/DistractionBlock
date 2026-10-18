@@ -78,7 +78,7 @@ export default function Bloqueios() {
         tag="Bloqueios"
         title="Bloqueios"
         desc="Sites e palavras pesquisadas num só lugar. Bloquear vale na hora; liberar leva 7 dias."
-        right={!S.extensao ? <Link className="btn sm" to="/ajustes">Extensão desconectada</Link> : null}
+        right={!S.extensao ? <Link className="btn sm" to="/painel/ajustes">Extensão desconectada</Link> : null}
       />
 
       <div className="card frame">
@@ -159,7 +159,7 @@ export default function Bloqueios() {
                       <td>{situacao}</td>
                       <td>
                         {pedido ? (
-                          <Link className="btn sm ghost" to="/liberacoes">Ver pedido</Link>
+                          <Link className="btn sm ghost" to="/painel/liberacoes">Ver pedido</Link>
                         ) : (
                           <button
                             className="btn sm ghost"

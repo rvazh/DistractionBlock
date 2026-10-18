@@ -6,6 +6,16 @@ Quando algo é bloqueado, aparece um aviso e uma mensagem de "melhora".
 Feito em **React** (Vite + React Router), do mesmo jeito que o CIFRA: site publicado no GitHub Pages
 e instalável como app. Quem bloqueia de verdade é a **extensão do navegador** (pasta `extension`).
 
+## Páginas
+
+| Endereço | O que é |
+|---|---|
+| `#/` | Site de apresentação (Início) |
+| `#/baixar` | Baixar e instalar (extensão, painel, primeiro bloqueio) |
+| `#/painel` | Painel do app (Bloqueios, Liberações, Mensagens e Ajustes ficam em `#/painel/...`) |
+
+A senha de controle é criada em **Painel › Ajustes**. Ela só é exigida para pedir uma liberação.
+
 ## Regra principal
 
 - **Bloquear é imediato.** Adicionar um site ou uma palavra vale na hora.
@@ -20,13 +30,14 @@ e instalável como app. Quem bloqueia de verdade é a **extensão do navegador**
 ├── public/               Ícones, manifest.webmanifest e sw.js (instalar como app)
 ├── src/
 │   ├── main.jsx          Inicia o React com HashRouter
-│   ├── App.jsx           Rotas: Painel, Bloqueios, Liberações, Mensagens, Ajustes
+│   ├── App.jsx           Rotas: site (Início, Baixar) e painel (/painel/...)
 │   ├── config.js         Endereço do GitHub, ID da extensão, dias de espera
-│   ├── components/       Menu lateral, janelas (modal), peças comuns
+│   ├── components/       Cabeçalho e rodapé do site, menu lateral do painel, janelas, peças comuns
 │   ├── pages/            Uma tela por arquivo (.jsx + .css)
 │   ├── dados/            Regras, armazenamento, conversa com a extensão, instalação
 │   ├── contexto/         Estado do app e avisos (toasts)
-│   └── styles/global.css Cores e peças comuns
+│   ├── assets/telas/     Capturas do app usadas no site
+│   └── styles/           global.css (painel, escuro) e site.css (apresentação, claro)
 ├── extension/            Extensão para Chrome/Edge/Brave/Opera
 └── test/                 Testes das regras (npm test)
 ```

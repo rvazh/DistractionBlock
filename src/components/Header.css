@@ -1,0 +1,22 @@
+/* ===== Cabeçalho do site ===== */
+.site-header {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(243, 243, 241, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--s-linha);
+}
+.site-nav {
+  max-width: 1280px; margin: 0 auto; padding: 14px 24px;
+  display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+}
+.site-marca { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--s-tinta); font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+.site-marca-icone { width: 42px; height: 42px; border-radius: 11px; background: var(--s-tinta); display: grid; place-items: center; }
+.site-marca-icone img { width: 32px; height: 32px; }
+.site-links { flex: 1 1 auto; display: flex; justify-content: center; gap: 28px; }
+.site-link { background: none; border: 0; color: var(--s-tinta); font-weight: 600; font-size: 16px; padding: 10px 4px; cursor: pointer; }
+.site-link:hover { color: var(--s-cinza); }
+.site-acoes { display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap; }
+
+@media (max-width: 900px) {
+  .site-links, .esconder-celular { display: none; }
+}
