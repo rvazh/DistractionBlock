@@ -52,7 +52,8 @@ export function Reticulo({ valor, rotulo }) {
         {ticks.map(([x1, y1, x2, y2], i) => <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} className="tk" />)}
       </svg>
       <div className="center">
-        <div className="big">{valor}</div>
+        {/* Números grandes encolhem para caber dentro da mira */}
+        <div className={'big' + (String(valor).length > 5 ? ' menor' : String(valor).length > 4 ? ' medio' : '')}>{valor}</div>
         <span className="tag">{rotulo}</span>
       </div>
     </div>

@@ -149,3 +149,18 @@ test('prazo de espera: aumentar vale na hora, diminuir vira pedido', async () =>
   // valor estranho salvo volta ao padrão
   assert.equal(R.migrate({ delayDays: 2 }).delayDays, 7);
 });
+
+test('total geral de bloqueios não some com o tempo', () => {
+  const t0 = Date.UTC(2026, 0, 1, 12);
+  const s = R.defaultState(t0);
+  R.addEvent(s, 'site', 'instagram.com', t0);
+  R.addEvent(s, 'word', 'aposta', t0);
+  R.addEvent(s, 'site', 'tiktok.com', t0 + 200 * R.DAY); // apaga os eventos com mais de 120 dias
+  assert.equal(s.events.length, 1);
+  const st = R.stats(s, t0 + 200 * R.DAY);
+  assert.equal(st.total, 3);
+  assert.deepEqual(st.totalByType, { site: 2, word: 1 });
+  // versão antiga, sem contador: começa pelo histórico
+  const velho = R.migrate({ events: [{ t: t0, type: 'site', target: 'x' }, { t: t0, type: 'word', target: 'y' }] });
+  assert.deepEqual(velho.totals, { site: 1, word: 1 });
+});

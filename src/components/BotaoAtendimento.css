@@ -1,0 +1,88 @@
+/* ===== Botão flutuante de atendimento (canto inferior direito), no preto e branco do Distraction Block ===== */
+.atd {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 45; /* abaixo das janelas (100) e dos avisos (200) */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  font-family: var(--font);
+}
+
+.atd__botao {
+  width: 58px;
+  height: 58px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  background: var(--white);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); /* contorno visível também no fundo escuro */
+}
+
+/* Dentro do painel: mouse em cima, a borda some e o botão cresce um pouquinho.
+   No site o botão não tem efeito, é só clicar. */
+.atd__botao--efeito { transition: transform 0.2s ease, border-color 0.2s ease; }
+.atd__botao--efeito:hover { border-color: transparent; transform: scale(1.08); }
+
+.atd__botao--aberto { background: #000; color: var(--white); border-color: var(--white); }
+.atd__x { font-size: 30px; line-height: 1; }
+
+/* Caixinha com as opções */
+.atd__caixa {
+  width: min(300px, calc(100vw - 40px));
+  padding: 14px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text);
+  animation: atd-entra 0.18s ease-out;
+}
+@keyframes atd-entra { from { opacity: 0; transform: translateY(8px); } }
+
+.atd__topo { display: flex; flex-direction: column; gap: 2px; padding: 2px 4px 6px; }
+.atd__topo b { font-size: 16px; }
+.atd__topo span { font-size: 13px; color: var(--muted); }
+
+.atd__opcao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.atd__opcao:hover { border-color: var(--white); background: var(--surface-3); }
+
+.atd__icone { width: 40px; height: 40px; flex-shrink: 0; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; }
+.atd__opcao--whatsapp .atd__icone { background: #25d366; color: #0b3d1f; }
+.atd__opcao--email .atd__icone { background: var(--white); color: #000; }
+
+.atd__textos { min-width: 0; display: flex; flex-direction: column; }
+.atd__textos b { font-size: 15px; }
+.atd__textos small { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (max-width: 560px) {
+  .atd { right: 14px; bottom: 14px; }
+  .atd__botao { width: 52px; height: 52px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atd__botao, .atd__caixa { transition: none; animation: none; }
+  .atd__botao--efeito:hover { transform: none; }
+}
+
+@media print { .atd { display: none; } }

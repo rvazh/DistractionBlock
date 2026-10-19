@@ -9,3 +9,14 @@ export const EXTENSAO_ID = 'elgkdjcphcnfdbalpioafiogblhfhnbc';
 
 // Dias de espera para qualquer liberação
 export const DIAS_DE_ESPERA = 7;
+
+// Botão de atendimento (canto inferior direito), igual ao do CIFRA
+export const EMAIL_SUPORTE = 'contatocifratech@gmail.com'; // se criar um e-mail só do Distraction Block, troque aqui
+export const WHATSAPP_ATENDIMENTO = {
+  numero: '5511976474912', // 55 (Brasil) + DDD + número, só dígitos
+  texto: '(11) 97647-4912', // como aparece na tela
+};
+
+// Botão do CIFRA (acima do atendimento): o outro projeto, de finanças pessoais
+// Cole aqui o endereço do CIFRA na Vercel. Enquanto estiver vazio, o botão não aparece.
+export const CIFRA_URL = 'https://cifra-ashen.vercel.app';

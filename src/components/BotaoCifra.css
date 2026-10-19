@@ -1,0 +1,76 @@
+/* ===== Botão do CIFRA (acima do atendimento, 70% do tamanho) ===== */
+.cfr {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 58px; /* centraliza o botão menor em cima do de atendimento */
+}
+
+.cfr__botao {
+  width: 41px; /* 70% dos 58px do botão de atendimento */
+  height: 41px;
+  margin: 0 auto;
+  padding: 5px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  background: var(--white); /* a logo do CIFRA é preta e dourada: aparece melhor no branco */
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
+  transition: transform 0.2s ease;
+}
+.cfr__botao img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.cfr__botao:hover, .cfr__botao--aberto { transform: scale(1.08); }
+
+.cfr__balao {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: max-content;
+  max-width: min(260px, calc(100vw - 110px));
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: 12px;
+  padding: 10px 12px 10px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--surface-2);
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+.cfr__balao b { font-size: 14px; font-weight: 700; }
+.cfr__balao small { grid-column: 1; font-size: 12px; line-height: 1.35; color: var(--muted); }
+.cfr__seta {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius);
+  background: var(--white);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.cfr__balao:hover b { text-decoration: underline; }
+
+/* Pontinha do balão apontando para o botão */
+.cfr__balao::after {
+  content: '';
+  position: absolute;
+  right: -7px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-top: 1px solid var(--line-strong);
+  border-right: 1px solid var(--line-strong);
+  background: var(--surface-2);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) { .cfr__botao { transition: none; } }

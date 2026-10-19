@@ -189,7 +189,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .pick-list .txt b { display: block; color: var(--text); font-weight: 600; }
 .pick-list .txt span { display: block; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.toasts { position: fixed; right: 20px; bottom: 20px; display: grid; gap: 8px; z-index: 200; }
+.toasts { position: fixed; right: 92px; bottom: 20px; display: grid; gap: 8px; z-index: 200; }
 .toast { background: var(--white); color: #000; padding: 10px 14px; font-weight: 600; font-size: 13px; border-radius: 2px; max-width: 360px; animation: enter .2s ease; }
 .toast.err { background: var(--alert); color: #fff; }
 
@@ -244,10 +244,13 @@ a.btn.primary { color: #000; }
   .nav::-webkit-scrollbar { display: none; }
   .mini-stats { width: 100%; }
   .card { padding: 18px; }
-  .toasts { left: 16px; right: 16px; }
+  .toasts { left: 16px; right: 16px; bottom: 136px; } /* acima dos botões flutuantes */
 }
 
 /* Formulário com caixa de confirmação */
 .check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted); cursor: pointer; }
 .check input { margin-top: 3px; accent-color: #fff; }
 .banner .btn { margin-left: auto; }
+
+/* Espaço no fim das páginas para os botões flutuantes (atendimento e CIFRA) não cobrirem o conteúdo */
+.page::after { content: ''; display: block; height: 72px; }

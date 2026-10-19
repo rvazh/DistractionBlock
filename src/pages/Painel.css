@@ -11,6 +11,9 @@
 .reticle .center { text-align: center; position: relative; }
 .reticle .big { font-family: var(--mono); font-size: 64px; font-weight: 500; line-height: 1; letter-spacing: -0.04em; }
 .reticle .tag { display: block; margin-top: 8px; font-size: 10px; }
+.reticle .big.medio { font-size: 48px; }
+.reticle .big.menor { font-size: 38px; }
+.mini-stats { grid-template-columns: repeat(3, 1fr); }
 
 .hero-side h2 { font-size: 22px; line-height: 1.25; margin: 6px 0 18px; font-weight: 600; text-wrap: balance; }
 .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); }
@@ -18,6 +21,7 @@
 .mini-stats div + div { border-left: 1px solid var(--line); }
 .mini-stats b { display: block; font-family: var(--mono); font-size: 22px; font-weight: 500; }
 .mini-stats .tag { font-size: 10px; }
+.hero-semana { margin: 10px 0 0; color: var(--muted); font-size: 12px; }
 
 .statuses { display: grid; gap: 0; }
 .status-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }

@@ -47,7 +47,8 @@ export function defaultState(now = Date.now()) {
     disabledDefaults: [],
     trusted: null,
     requests: [],
-    events: []
+    events: [],          // últimos 120 dias, para os gráficos
+    totals: { site: 0, word: 0 } // tudo o que já foi bloqueado (não é apagado)
   };
 }
 
@@ -61,6 +62,12 @@ export function migrate(raw, now = Date.now()) {
   if (!s.trusted || typeof s.trusted !== 'object') s.trusted = null;
   if (!s.account || typeof s.account !== 'object') s.account = null;
   if (!validDelay(s.delayDays)) s.delayDays = DIAS_DE_ESPERA;
+  // Contador geral: quem vem de uma versão sem ele começa pelo histórico guardado
+  if (!raw.totals || typeof raw.totals !== 'object') {
+    s.totals = { site: 0, word: 0 };
+    for (const e of s.events) if (e && (e.type === 'site' || e.type === 'word')) s.totals[e.type]++;
+  }
+  for (const k of ['site', 'word']) if (!Number.isFinite(s.totals[k]) || s.totals[k] < 0) s.totals[k] = 0;
   return s;
 }
 
@@ -370,6 +377,8 @@ export function activeMessages(state, defaults) {
 /* ---------- Eventos / estatísticas ---------- */
 export function addEvent(state, type, target, now = Date.now()) {
   state.events.push({ t: now, type, target: String(target || '').slice(0, 200) });
+  if (!state.totals) state.totals = { site: 0, word: 0 };
+  if (type === 'site' || type === 'word') state.totals[type] = (state.totals[type] || 0) + 1;
   const cutoff = now - 120 * DAY;
   if (state.events.length > 20000 || (state.events[0] && state.events[0].t < cutoff)) {
     state.events = state.events.filter((e) => e.t >= cutoff).slice(-20000);
@@ -403,7 +412,8 @@ export function stats(state, now = Date.now()) {
   return {
     today: todayCount,
     byType,
-    total: state.events.length,
+    total: (state.totals ? (state.totals.site || 0) + (state.totals.word || 0) : state.events.length),
+    totalByType: { site: (state.totals && state.totals.site) || 0, word: (state.totals && state.totals.word) || 0 },
     week: days.slice(-7),
     month: days,
     recent: state.events.slice(-12).reverse(),

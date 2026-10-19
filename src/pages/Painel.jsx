@@ -29,9 +29,11 @@ export default function Painel() {
   const ext = S.extensao;
   const abertos = S.requests.filter(pedidoAberto);
   const semana = st.week.reduce((soma, d) => soma + d.count, 0);
-  const frase = st.today === 0
-    ? 'Nenhuma distração passou pela mira hoje. Siga assim.'
-    : `Você disse não para ${plural(st.today, 'distração', 'distrações')} hoje.`;
+  const fmt = (n) => n.toLocaleString('pt-BR');
+  const desde = fmtDate(Date.now() - (st.activeDays - 1) * 864e5); // primeiro dia de proteção
+  const frase = st.total === 0
+    ? 'Nenhuma distração passou pela mira ainda. Quando a extensão bloquear algo, a conta começa aqui.'
+    : `Desde ${desde.slice(0, 5)}, você disse não para ${fmt(st.total)} ${st.total === 1 ? 'distração' : 'distrações'}.`;
 
   return (
     <section className="page">
@@ -47,15 +49,16 @@ export default function Painel() {
 
       <div className="grid g-dash">
         <div className="card frame hero">
-          <Reticulo valor={st.today} rotulo="bloqueios hoje" />
+          <Reticulo valor={fmt(st.total)} rotulo="bloqueios no total" />
           <div className="hero-side">
-            <p className="tag">Hoje</p>
+            <p className="tag">No total · {plural(st.activeDays, 'dia', 'dias')} de proteção</p>
             <h2>{frase}</h2>
             <div className="mini-stats">
-              <div><b>{st.byType.site || 0}</b><span className="tag">Sites</span></div>
-              <div><b>{st.byType.word || 0}</b><span className="tag">Pesquisas</span></div>
-              <div><b>{semana}</b><span className="tag">Na semana</span></div>
+              <div><b>{fmt(st.totalByType.site)}</b><span className="tag">Sites</span></div>
+              <div><b>{fmt(st.totalByType.word)}</b><span className="tag">Pesquisas</span></div>
+              <div><b>{fmt(st.today)}</b><span className="tag">Hoje</span></div>
             </div>
+            <p className="hero-semana">{plural(semana, 'bloqueio', 'bloqueios')} nos últimos 7 dias</p>
           </div>
         </div>
 

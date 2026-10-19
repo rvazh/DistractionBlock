@@ -10,6 +10,7 @@ import Bloqueios from './pages/Bloqueios.jsx';
 import Liberacoes from './pages/Liberacoes.jsx';
 import Mensagens from './pages/Mensagens.jsx';
 import Ajustes from './pages/Ajustes.jsx';
+import BotaoAtendimento from './components/BotaoAtendimento.jsx';
 
 // O painel só abre depois do login (sem conta ainda: vai para Criar conta)
 function SoLogado({ children }) {
@@ -21,6 +22,7 @@ function SoLogado({ children }) {
 
 export default function App() {
   return (
+    <>
     <Routes>
       {/* Site de apresentação */}
       <Route path="/" element={<Inicio />} />
@@ -41,5 +43,9 @@ export default function App() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+
+    {/* Atendimento (WhatsApp ou e-mail) e, acima dele, o botão do CIFRA — em todas as telas, como no CIFRA */}
+    <BotaoAtendimento />
+    </>
   );
 }
