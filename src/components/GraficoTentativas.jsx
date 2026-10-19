@@ -56,7 +56,7 @@ export default function GraficoTentativas() {
         <div className="seg" role="radiogroup" aria-label="Período">
           {[7, 30].map((p) => (
             <button key={p} type="button" role="radio" aria-checked={periodo === p} className={periodo === p ? 'on' : ''} onClick={() => escolher(p)}>
-              {p} dias
+              {p} dias{p === 30 && <span className="pro-selo">Pro</span>}
             </button>
           ))}
         </div>

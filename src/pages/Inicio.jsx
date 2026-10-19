@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
+import Planos from '../components/Planos.jsx';
 import logo from '../assets/logo-branca.png';
 import telaPainel from '../assets/telas/painel.webp';
 import telaBloqueios from '../assets/telas/bloqueios.webp';
@@ -52,6 +53,7 @@ const RECURSOS = [
 const DUVIDAS = [
   ['Por que esperar 7 dias para liberar?', 'Porque a vontade de se distrair dura minutos. Se uma semana depois você ainda quiser liberar, provavelmente é uma decisão de verdade, e não um impulso.'],
   ['Dá para mudar os 7 dias?', 'Dá. Em Ajustes você escolhe 4, 7, 14, 30 dias ou outro número, até 90. Aumentar vale na hora. Diminuir também é uma liberação: espera o prazo atual e você confirma com a senha.'],
+  ['Quanto custa?', 'O plano Gratuito bloqueia até 4 sites, 5 palavras e 2 apps. O Pro custa R$ 9,99 por mês e libera tudo ilimitado, além de cores, imagem de fundo, mensagens suas e o gráfico de 30 dias. Na fase de lançamento ainda não existe cobrança: todo mundo usa o Pro.'],
   ['E se eu esquecer a senha?', 'Não existe recuperação, para que ninguém (nem você num momento de fraqueza) consiga contornar o bloqueio. Guarde a senha em um lugar seguro.'],
   ['Funciona em quais navegadores?', 'Chrome, Edge, Brave e Opera no computador, com a extensão do Distraction Block instalada.'],
   ['Meus dados vão para algum servidor?', 'Não. A conta, as listas, a senha e o histórico ficam só no seu navegador. O site conversa apenas com a extensão instalada nele.'],
@@ -203,8 +205,8 @@ export default function Inicio() {
           </div>
 
           <figure className="s-tela">
-            <div className="s-tela-moldura destaque"><img src={telaPainel} alt="Painel do Distraction Block com os bloqueios de hoje, o status da extensão e o gráfico dos últimos 7 dias" /></div>
-            <figcaption className="mono pequena">Painel · bloqueios do dia, status da proteção e a mensagem do dia</figcaption>
+            <div className="s-tela-moldura destaque"><img src={telaPainel} alt="Painel do Distraction Block com o total de bloqueios, o status da proteção e a contagem dos dias até poder liberar" /></div>
+            <figcaption className="mono pequena">Painel · total de bloqueios, status da proteção e a contagem até poder liberar</figcaption>
           </figure>
 
           <div className="inicio-duas">
@@ -232,7 +234,7 @@ export default function Inicio() {
 
           <div className="inicio-lado invertido">
             <figure className="s-tela inicio-lado-imagem">
-              <div className="s-tela-moldura"><img src={telaLiberacoes} alt="Tela Liberações com a pessoa de confiança e um pedido com contagem de 7 dias" /></div>
+              <div className="s-tela-moldura"><img src={telaLiberacoes} alt="Tela Liberações com a pessoa de confiança e um pedido aguardando a aprovação dela" /></div>
             </figure>
             <div className="inicio-lado-texto">
               <p className="s-rotulo">Liberações</p>
@@ -242,6 +244,8 @@ export default function Inicio() {
           </div>
         </div>
       </section>
+
+      <Planos />
 
       {/* Dúvidas */}
       <section id="duvidas" className="inicio-duvidas" aria-labelledby="faq-t">

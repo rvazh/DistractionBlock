@@ -41,6 +41,7 @@ export function defaultState(now = Date.now()) {
     account: null,       // { name, email, createdAt }
     loginLock: null,     // { fails, until } — tentativas erradas de entrar
     delayDays: DIAS_DE_ESPERA, // prazo para liberar, escolhido em Ajustes
+    style: { tema: 'escuro', cor: 'neutro', escurecer: 0.6 }, // Ajustes › Estilos (painel)
     sessionId: null,     // muda a cada login; a sessão aberta guarda o mesmo valor
     lists: { sites: [], words: [] },
     customMessages: [],
@@ -62,6 +63,7 @@ export function migrate(raw, now = Date.now()) {
   if (!s.trusted || typeof s.trusted !== 'object') s.trusted = null;
   if (!s.account || typeof s.account !== 'object') s.account = null;
   if (!validDelay(s.delayDays)) s.delayDays = DIAS_DE_ESPERA;
+  s.style = normStyle(raw.style);
   // Contador geral: quem vem de uma versão sem ele começa pelo histórico guardado
   if (!raw.totals || typeof raw.totals !== 'object') {
     s.totals = { site: 0, word: 0 };
@@ -361,6 +363,23 @@ export function setDelay(state, days, now = Date.now()) {
   return { applied: false, request: r };
 }
 
+/* ---------- Estilos do painel (tema, cor de destaque, escurecer a imagem de fundo) ---------- */
+export const TEMAS = ['escuro', 'claro'];
+export const CORES = ['neutro', 'dourado', 'verde', 'azul', 'lilas', 'coral'];
+export function normStyle(st) {
+  const o = st && typeof st === 'object' ? st : {};
+  const esc = Number(o.escurecer);
+  return {
+    tema: TEMAS.includes(o.tema) ? o.tema : 'escuro',
+    cor: CORES.includes(o.cor) ? o.cor : 'neutro',
+    escurecer: Number.isFinite(esc) ? Math.min(0.9, Math.max(0, Math.round(esc * 100) / 100)) : 0.6,
+  };
+}
+export function setStyle(state, info) {
+  state.style = normStyle({ ...state.style, ...info });
+  return state.style;
+}
+
 /* ---------- Mensagens ---------- */
 export function setDefaultMessage(state, text, on) {
   const set = new Set(state.disabledDefaults);
@@ -445,6 +464,7 @@ export function publicState(state, extra = {}, now = Date.now()) {
     stats: stats(state, now),
     delayDays: delayMs(state) / DAY,
     delayOptions: DELAY_OPTIONS,
+    style: normStyle(state.style),
     delayMin: MIN_DELAY_DAYS,
     delayMax: MAX_DELAY_DAYS,
     now,

@@ -5,6 +5,7 @@ import App from './App.jsx';
 import { EstadoProvider } from './contexto/Estado.jsx';
 import { UIProvider } from './contexto/UI.jsx';
 import './styles/global.css';
+import './styles/estilos.css';
 import './dados/instalar.js'; // já fica de olho no convite de instalação do navegador
 
 // HashRouter (URLs com #/) funciona no GitHub Pages e no Vercel sem configuração extra

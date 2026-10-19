@@ -29,13 +29,29 @@ export default function MenuLateral() {
     window.scrollTo(0, 0);
   }, [pathname]);
 
+  // Estilos (Ajustes › Estilos): valem só aqui dentro, depois do login. Ao sair do painel, o site volta ao normal.
+  useEffect(() => {
+    const html = document.documentElement;
+    html.dataset.tema = S.style.tema;
+    html.dataset.cor = S.style.cor;
+    return () => {
+      delete html.dataset.tema;
+      delete html.dataset.cor;
+    };
+  }, [S.style.tema, S.style.cor]);
+
   const contagem = {
     bloqueios: S.lists.sites.length + S.lists.words.length,
     prontos: S.requests.filter((r) => r.status === 'ready' && !r.needsApproval).length,
   };
 
   return (
-    <div className="shell">
+    <div className={'shell' + (S.fundo ? ' com-fundo' : '')}>
+      {S.fundo && (
+        <div className="fundo-tela" style={{ backgroundImage: `url("${S.fundo}")` }} aria-hidden="true">
+          <span style={{ opacity: S.style.escurecer }} />
+        </div>
+      )}
       <aside className="sidebar">
         <Link className="brand" to="/" title="Ir para o site">
           <img src={logo} alt="" />

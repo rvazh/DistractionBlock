@@ -18,7 +18,7 @@
 .perm { display: flex; gap: 16px; align-items: flex-start; padding: 18px 0; border-top: 1px solid var(--line); }
 .perm:first-child { border-top: 0; padding-top: 4px; }
 .avatar { width: 44px; height: 44px; flex: none; border-radius: 50%; display: grid; place-items: center; font-weight: 700; border: 1px solid var(--line-strong); color: var(--text); background: var(--surface-3); }
-.avatar.solid { background: var(--white); color: #000; border-color: var(--white); }
+.avatar.solid { background: var(--white); color: var(--on-accent); border-color: var(--white); }
 .avatar.ghost { border-style: dashed; color: var(--muted); background: none; font-size: 20px; font-weight: 400; }
 .perm-main { flex: 1; min-width: 0; display: grid; gap: 4px; }
 .perm-name { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }

@@ -31,7 +31,7 @@ export default function Mensagens() {
 
       <div className="grid g-msg">
         <div className="card frame">
-          <div className="card-head"><h2>Suas mensagens</h2><span className="tag">{S.customMessages.length} personalizadas</span></div>
+          <div className="card-head"><h2>Suas mensagens <span className="pro-selo">Pro</span></h2><span className="tag">{S.customMessages.length} personalizadas</span></div>
           <form className="add-row" onSubmit={adicionar}>
             <input className="input" placeholder="Escreva a sua mensagem" maxLength={240} value={texto} onChange={(e) => setTexto(e.target.value)} aria-label="Nova mensagem" />
             <button className="btn primary" type="submit">Adicionar</button>

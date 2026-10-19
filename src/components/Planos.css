@@ -1,0 +1,40 @@
+/* ===== Site › Planos ===== */
+.planos { padding-top: 104px; scroll-margin-top: 40px; }
+.planos-cabeca { max-width: 760px; margin: 0 auto 44px; text-align: center; display: grid; gap: 16px; }
+.planos-cabeca .s-rotulo { margin: 0; }
+
+.planos-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; max-width: 980px; margin: 0 auto; }
+
+.plano {
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 32px; border-radius: 24px;
+  background: var(--s-branco); border: 1px solid var(--s-linha);
+}
+.plano-pro { border-color: var(--s-tinta); }
+
+.plano-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.plano h3 { margin: 0; font-size: 26px; }
+.plano-selo {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 999px; background: var(--s-branco); color: var(--s-tinta);
+}
+.plano-resumo { margin: 0; color: var(--s-tinta-suave); font-size: 16px; min-height: 2.9em; }
+.plano-pro .plano-resumo { color: var(--s-claro-escuro); }
+
+.plano-preco { margin: 6px 0 4px; display: flex; align-items: baseline; gap: 6px; }
+.plano-preco .moeda { font-size: 18px; font-weight: 600; }
+.plano-preco .valor { font-size: 56px; font-weight: 700; line-height: 1; letter-spacing: -0.03em; }
+.plano-preco .periodo { color: var(--s-cinza); font-size: 15px; }
+.plano-pro .plano-preco .periodo { color: var(--s-claro-escuro); }
+
+.plano ul { list-style: none; margin: 4px 0 8px; padding: 18px 0 0; border-top: 1px solid var(--s-linha); display: grid; gap: 10px; flex: 1; }
+.plano-pro ul { border-top-color: #2c2c2c; }
+.plano li { display: flex; gap: 10px; align-items: flex-start; font-size: 16px; line-height: 1.4; }
+.plano li svg { flex: none; margin-top: 2px; }
+.plano .sbtn { width: 100%; }
+
+@media (max-width: 760px) {
+  .planos { padding-top: 72px; }
+  .planos-grade { grid-template-columns: 1fr; }
+  .plano { padding: 26px 22px; }
+}

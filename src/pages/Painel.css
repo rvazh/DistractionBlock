@@ -43,9 +43,22 @@
   font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
   padding: 3px 8px; border: 1px solid var(--line-strong); border-radius: 2px; color: var(--muted); white-space: nowrap;
 }
-.pill.solid { background: var(--white); color: #000; border-color: var(--white); }
+.pill.solid { background: var(--white); color: var(--on-accent); border-color: var(--white); }
 .pill.alert { color: var(--alert); border-color: rgba(255,74,61,.45); }
 
 .empty { color: var(--muted); padding: 28px 0 8px; text-align: center; font-size: 13px; }
 .empty b { display: block; color: var(--text); font-size: 15px; margin-bottom: 4px; }
 
+
+/* Telas médias (notebook): mira menor para os números do cartão principal caberem */
+.hero-side { min-width: 0; }
+.mini-stats div { min-width: 0; }
+@media (max-width: 1360px) and (min-width: 1121px) {
+  .hero { grid-template-columns: 190px 1fr; gap: 20px; }
+  .reticle { width: 190px; height: 190px; }
+  .reticle .big { font-size: 52px; }
+  .reticle .big.medio { font-size: 40px; }
+  .reticle .big.menor { font-size: 32px; }
+  .mini-stats div { padding: 10px; }
+  .mini-stats .tag { letter-spacing: .06em; }
+}

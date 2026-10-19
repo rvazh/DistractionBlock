@@ -1,0 +1,37 @@
+/* ===== Ajustes › Estilos ===== */
+#estilos .card-head h2 { display: flex; align-items: center; gap: 10px; }
+.estilos-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 6px; }
+.estilos-bloco { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.estilos-bloco > .tag { margin-bottom: 10px; }
+
+.cores { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; width: 100%; max-width: 420px; }
+.cor {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 10px 4px 8px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface-2); color: var(--muted); cursor: pointer; font-family: inherit;
+}
+.cor:hover { border-color: var(--line-strong); color: var(--text); }
+.cor.on { border-color: var(--white); color: var(--text); }
+.cor-bola { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line-strong); }
+.cor.on .cor-bola { box-shadow: 0 0 0 3px var(--surface-2), 0 0 0 4px var(--white); }
+.cor-nome { font-size: 11px; }
+
+.fundo-previa {
+  position: relative; width: 100%; aspect-ratio: 16 / 9; max-height: 180px;
+  border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden;
+  background-size: cover; background-position: center;
+}
+.fundo-previa span { position: absolute; inset: 0; background: var(--bg); }
+.fundo-previa.vazia { display: grid; place-items: center; border-style: dashed; background: var(--surface-2); }
+.fundo-previa.vazia p { margin: 0; padding: 0 16px; color: var(--muted); font-size: 12px; text-align: center; }
+
+.escurecer { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; margin-top: 14px; font-size: 13px; color: var(--muted); }
+.escurecer input { accent-color: var(--white); width: 100%; }
+.escurecer b { font-family: var(--mono); font-weight: 500; color: var(--text); min-width: 38px; text-align: right; }
+
+@media (max-width: 900px) {
+  .estilos-grade { grid-template-columns: 1fr; }
+}
+@media (max-width: 420px) {
+  .cores { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

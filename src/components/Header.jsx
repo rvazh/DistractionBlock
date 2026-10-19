@@ -8,6 +8,7 @@ const SECOES = [
   ['como-funciona', 'Como funciona'],
   ['recursos', 'Recursos'],
   ['telas', 'Telas'],
+  ['planos', 'Planos'],
   ['duvidas', 'Dúvidas'],
 ];
 

@@ -6,6 +6,7 @@ import { useUI } from '../contexto/UI.jsx';
 import { PageHead, Vazio } from '../components/Pecas.jsx';
 import { PedirLiberacao } from '../components/Pedidos.jsx';
 import { fmtDate, fmtLeft, pedidoAberto, plural } from '../dados/formato.js';
+import { COBRANCA_ATIVA, LIMITES_GRATIS } from '../dados/planos.js';
 import './Bloqueios.css';
 
 const TIPOS = {
@@ -117,6 +118,10 @@ export default function Bloqueios() {
           </div>
         )}
         <p className="note">{cfg.nota}</p>
+        <p className="note plano-uso">
+          Plano Gratuito: {S.lists.sites.length} de {LIMITES_GRATIS.sites} sites · {S.lists.words.length} de {LIMITES_GRATIS.words} palavras.
+          {COBRANCA_ATIVA ? ' Para bloquear sem limite, assine o Pro.' : ' Na fase de lançamento não há limite: o Pro está liberado.'}
+        </p>
       </div>
 
       <div className="card" style={{ marginTop: 16 }}>

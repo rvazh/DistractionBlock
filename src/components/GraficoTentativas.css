@@ -24,17 +24,17 @@
 .barras.mes .barra { width: 100%; max-width: 18px; }
 .barra.zero { background: var(--line-strong); }
 .barra-col:hover .barra { opacity: .75; }
-.barra-col:hover .barra-trilho { background: rgba(255, 255, 255, .04); }
+.barra-col:hover .barra-trilho { background: color-mix(in srgb, var(--text) 5%, transparent); }
 .barra-lbl { font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; height: 14px; }
 .barra-col.hoje .barra-lbl { color: var(--text); }
 
 .barra-tip {
   position: absolute; bottom: calc(100% - 4px); left: 50%; transform: translateX(-50%); z-index: 2;
-  display: grid; gap: 2px; background: var(--white); color: #000; font-size: 12px; white-space: nowrap;
+  display: grid; gap: 2px; background: var(--white); color: var(--on-accent); font-size: 12px; white-space: nowrap;
   padding: 6px 9px; border-radius: 2px; opacity: 0; pointer-events: none; transition: opacity .12s;
 }
 .barra-tip b { font-weight: 600; }
-.barra-tip span { color: #444; }
+.barra-tip span { color: inherit; opacity: .7; }
 .barra-col.esq .barra-tip { left: 0; transform: none; }
 .barra-col.dir .barra-tip { left: auto; right: 0; transform: none; }
 .barra-col:hover .barra-tip { opacity: 1; }

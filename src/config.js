@@ -20,3 +20,9 @@ export const WHATSAPP_ATENDIMENTO = {
 // Botão do CIFRA (acima do atendimento): o outro projeto, de finanças pessoais
 // Cole aqui o endereço do CIFRA na Vercel. Enquanto estiver vazio, o botão não aparece.
 export const CIFRA_URL = 'https://cifra-ashen.vercel.app';
+
+// Planos. Enquanto COBRANCA_ATIVA for false, nada é travado: os limites só aparecem como informação
+// e os recursos Pro ficam liberados para todo mundo (fase de lançamento, ainda sem pagamento de verdade).
+export const COBRANCA_ATIVA = false;
+export const PRECO_PRO = { valor: '9,99', periodo: 'mês' };
+export const LIMITES_GRATIS = { sites: 4, apps: 2, words: 5 };

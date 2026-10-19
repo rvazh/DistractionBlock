@@ -11,7 +11,8 @@
   --text: #f3f3f3;
   --muted: #8d8d8d;
   --dim: #5c5c5c;
-  --white: #ffffff;
+  --white: #ffffff;   /* cor de destaque (muda em Ajustes › Estilos) */
+  --on-accent: #000000; /* texto em cima da cor de destaque */
   --alert: #ff4a3d;
   --alert-soft: rgba(255, 74, 61, 0.12);
   --font: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
@@ -58,8 +59,8 @@ button, input, textarea, select { font: inherit; color: inherit; }
 }
 .btn:hover { border-color: var(--white); }
 .btn:focus-visible, .input:focus-visible { outline: 2px solid var(--white); outline-offset: 2px; }
-.btn.primary { background: var(--white); color: #000; border-color: var(--white); }
-.btn.primary:hover { background: #d9d9d9; }
+.btn.primary { background: var(--white); color: var(--on-accent); border-color: var(--white); }
+.btn.primary:hover { filter: brightness(0.88); }
 .btn.danger { border-color: rgba(255,74,61,.5); color: var(--alert); }
 .btn.danger:hover { background: var(--alert-soft); border-color: var(--alert); }
 .btn.ghost { border-color: transparent; color: var(--muted); }
@@ -128,7 +129,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 3px; gap: 2px; background: var(--surface-2); height: 40px; box-sizing: border-box; }
 .seg button { border: 0; background: none; color: var(--muted); padding: 0 14px; border-radius: 2px; font-weight: 600; cursor: pointer; }
 .seg button:hover { color: var(--text); }
-.seg button.on { background: var(--white); color: #000; }
+.seg button.on { background: var(--white); color: var(--on-accent); }
 
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .chip {
@@ -162,7 +163,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 }
 .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--muted); transition: transform .15s, background .15s; }
 .switch.on { background: var(--white); border-color: var(--white); }
-.switch.on::after { transform: translateX(20px); background: #000; }
+.switch.on::after { transform: translateX(20px); background: var(--on-accent); }
 .steps { margin: 0; padding-left: 20px; color: var(--muted); display: grid; gap: 6px; font-size: 13px; }
 .steps b { color: var(--text); font-weight: 600; }
 .steps code, .note code { font-family: var(--mono); font-size: 12px; color: var(--text); background: var(--surface-3); padding: 1px 6px; border-radius: 2px; }
@@ -190,7 +191,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .pick-list .txt span { display: block; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .toasts { position: fixed; right: 92px; bottom: 20px; display: grid; gap: 8px; z-index: 200; }
-.toast { background: var(--white); color: #000; padding: 10px 14px; font-weight: 600; font-size: 13px; border-radius: 2px; max-width: 360px; animation: enter .2s ease; }
+.toast { background: var(--white); color: var(--on-accent); padding: 10px 14px; font-weight: 600; font-size: 13px; border-radius: 2px; max-width: 360px; animation: enter .2s ease; }
 .toast.err { background: var(--alert); color: #fff; }
 
 @media (max-width: 1120px) {
@@ -203,7 +204,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 
 /* ===== Peças comuns ===== */
 a.btn { text-decoration: none; color: inherit; }
-a.btn.primary { color: #000; }
+a.btn.primary { color: var(--on-accent); }
 .banner { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; border: 1px dashed var(--line-strong); padding: 12px 16px; margin: -8px 0 20px; color: var(--muted); font-size: 13px; }
 .banner .tag { color: var(--text); }
 .warn-note { color: var(--text); }
@@ -249,8 +250,17 @@ a.btn.primary { color: #000; }
 
 /* Formulário com caixa de confirmação */
 .check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted); cursor: pointer; }
-.check input { margin-top: 3px; accent-color: #fff; }
+.check input { margin-top: 3px; accent-color: var(--white); }
 .banner .btn { margin-left: auto; }
 
 /* Espaço no fim das páginas para os botões flutuantes (atendimento e CIFRA) não cobrirem o conteúdo */
 .page::after { content: ''; display: block; height: 72px; }
+
+/* Selo dos recursos do plano Pro */
+.pro-selo {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--mono); font-size: 9px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 2px; border: 1px solid var(--white); color: var(--white); vertical-align: middle;
+}
+.seg button .pro-selo { margin-left: 6px; padding: 0 4px; font-size: 8px; }
+.seg button.on .pro-selo { border-color: var(--on-accent); color: var(--on-accent); }

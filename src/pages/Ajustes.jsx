@@ -1,10 +1,12 @@
-// Ajustes: prazo para liberar, conta, senha, extensão, instalação e pessoa de confiança
+// Ajustes: prazo para liberar, estilos, plano, conta, senha, extensão, instalação e pessoa de confiança
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEstado } from '../contexto/Estado.jsx';
 import { useUI } from '../contexto/UI.jsx';
 import { PageHead } from '../components/Pecas.jsx';
 import PrazoLiberacao from '../components/PrazoLiberacao.jsx';
+import Estilos from '../components/Estilos.jsx';
+import { COBRANCA_ATIVA, PRECO_PRO, usoDoPlano } from '../dados/planos.js';
 import { abertoComoApp, aparelhoAtual, instalarApp, podeInstalar } from '../dados/instalar.js';
 import { REPO_URL } from '../config.js';
 import './Ajustes.css';
@@ -43,6 +45,43 @@ function InstalarApp() {
       ) : (
         <p className="note">No Chrome ou no Edge, clique no ícone de instalar na barra de endereço (o monitor com uma seta) ou no menu <b>⋮ › Instalar Distraction Block</b>.</p>
       )}
+    </div>
+  );
+}
+
+// Plano atual e quanto do limite do Gratuito já foi usado
+function SeuPlano() {
+  const { S } = useEstado();
+  const navigate = useNavigate();
+  return (
+    <div className="card" id="plano">
+      <div className="card-head">
+        <h2>Seu plano</h2>
+        <span className="pill solid">Gratuito</span>
+      </div>
+      <p className="sub">
+        {COBRANCA_ATIVA
+          ? `O Pro custa R$ ${PRECO_PRO.valor} por ${PRECO_PRO.periodo}: bloqueio ilimitado, estilos, mensagens suas e gráfico de 30 dias.`
+          : 'Fase de lançamento: o Pro está liberado para todos, sem cobrança. Os limites abaixo ainda não travam nada.'}
+      </p>
+      <ul className="uso">
+        {usoDoPlano(S).map((u) => {
+          const pct = Math.min(100, (u.usado / u.limite) * 100);
+          const passou = u.usado > u.limite;
+          return (
+            <li key={u.id} className={passou ? 'passou' : ''}>
+              <div className="uso-linha">
+                <span>{u.rotulo}{u.emBreve && <small> · em breve</small>}</span>
+                <b>{u.usado} de {u.limite}</b>
+              </div>
+              <div className="uso-trilho"><div style={{ width: `${pct}%` }} /></div>
+            </li>
+          );
+        })}
+      </ul>
+      <button type="button" className="btn" onClick={() => navigate('/', { state: { secao: 'planos' } })}>
+        Ver os planos · Pro R$ {PRECO_PRO.valor}/{PRECO_PRO.periodo}
+      </button>
     </div>
   );
 }
@@ -113,11 +152,16 @@ export default function Ajustes() {
 
   return (
     <section className="page">
-      <PageHead tag="Ajustes" title="Ajustes" desc="Prazo para liberar, conta, senha, extensão e instalação." />
+      <PageHead tag="Ajustes" title="Ajustes" desc="Prazo para liberar, estilos, plano, conta, senha, extensão e instalação." />
 
       <PrazoLiberacao />
 
-      <div className="grid g-2" style={{ margin: '16px 0' }}>
+      <div style={{ marginTop: 16 }}>
+        <Estilos />
+      </div>
+
+      <div className="grid g-3" style={{ margin: '16px 0' }}>
+        <SeuPlano />
         <MinhaConta />
         <div className="card" id="senha">
           <h2>Trocar senha</h2>

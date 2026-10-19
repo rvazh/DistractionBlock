@@ -7,6 +7,7 @@ import { pingExtensao, enviarListas, buscarBloqueios } from './extensao.js';
 
 const CHAVE = 'distraction-block:v1';
 const CHAVE_SESSAO = 'distraction-block:sessao'; // fica no localStorage ("manter conectado") ou no sessionStorage
+const CHAVE_FUNDO = 'distraction-block:fundo'; // imagem de fundo do painel (separada, porque é grande)
 const NAVEGADORES = { chrome: 'Google Chrome', edge: 'Microsoft Edge', brave: 'Brave', opera: 'Opera' };
 
 function carregar() {
@@ -18,6 +19,15 @@ function carregar() {
 }
 
 let estado = R.migrate(carregar());
+let fundo = lerFundo();
+
+function lerFundo() {
+  try {
+    return localStorage.getItem(CHAVE_FUNDO) || null;
+  } catch {
+    return null;
+  }
+}
 let extensao = null; // { navegador, nome, incognito, versao } quando a extensão responde
 const ouvintes = new Set();
 
@@ -67,6 +77,7 @@ function fecharSessao() {
 export function retrato() {
   return R.publicState(estado, {
     logado: estaLogado(),
+    fundo,
     extensao,
     mensagensPadrao: MENSAGENS,
   });
@@ -125,6 +136,7 @@ if (typeof window !== 'undefined') {
       avisar();
     }
     if (e.key === CHAVE_SESSAO) avisar(); // entrou ou saiu em outra aba
+    if (e.key === CHAVE_FUNDO) { fundo = lerFundo(); avisar(); }
   });
   setTimeout(sincronizar, 300);
 }
@@ -182,6 +194,23 @@ export const acoes = {
   solicitarPermissao: (id) => mudar((s) => R.askApproval(s, id)),
   aprovarComCodigo: (id, codigo) => mudar((s) => R.approveWithCode(s, id, codigo)),
   registrarNegacao: (id) => mudar((s) => R.denyRequest(s, id)),
+
+  // Estilos do painel
+  mudarEstilo: (dados) => mudar((s) => R.setStyle(s, dados)),
+  definirFundo(dataUrl) {
+    try {
+      localStorage.setItem(CHAVE_FUNDO, dataUrl);
+    } catch {
+      throw new Error('A imagem é grande demais para guardar neste navegador. Tente outra, menor.');
+    }
+    fundo = dataUrl;
+    avisar();
+  },
+  removerFundo() {
+    try { localStorage.removeItem(CHAVE_FUNDO); } catch { /* ignora */ }
+    fundo = null;
+    avisar();
+  },
 
   adicionarMensagem: (texto) =>
     mudar((s) => {

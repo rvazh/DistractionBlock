@@ -14,7 +14,7 @@
   padding: 4px;
   border: 2px solid #eaaf5a; /* dourado da logo do CIFRA */
   border-radius: 50%;
-  background: var(--white); /* a logo do CIFRA é preta e dourada: aparece melhor no branco */
+  background: #fff; /* a logo do CIFRA é preta e dourada: aparece melhor no branco */
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -50,7 +50,7 @@
   height: 28px;
   border-radius: var(--radius);
   background: var(--white);
-  color: #000;
+  color: var(--on-accent);
   display: flex;
   align-items: center;
   justify-content: center;

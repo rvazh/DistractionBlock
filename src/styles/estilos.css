@@ -1,0 +1,54 @@
+/* ===== Estilos do painel (Ajustes › Estilos) =====
+   Valem só depois do login: o painel coloca data-tema e data-cor no <html> e tira ao sair.
+   --white é a cor de destaque; --on-accent é o texto em cima dela. */
+
+/* ---------- Tema claro ---------- */
+html[data-tema='claro'] {
+  --bg: #f1f1ee;
+  --surface: #ffffff;
+  --surface-2: #f7f7f4;
+  --surface-3: #ececea;
+  --line: #e0e0db;
+  --line-strong: #c6c6c0;
+  --text: #141414;
+  --muted: #5e5e5a;
+  --dim: #8a8a85;
+  --white: #141414;
+  --on-accent: #ffffff;
+  --alert: #d4322a;
+  --alert-soft: rgba(212, 50, 42, 0.1);
+  color-scheme: light;
+}
+html[data-tema='claro'] .brand img { filter: invert(1); } /* logo branca vira preta */
+html[data-tema='claro'] .modal-root { background: rgba(20, 20, 20, 0.45); }
+
+/* ---------- Cores de destaque: tema escuro ---------- */
+html[data-cor='dourado'] { --white: #eaaf5a; }
+html[data-cor='verde'] { --white: #5fd38d; }
+html[data-cor='azul'] { --white: #6cb6ff; }
+html[data-cor='lilas'] { --white: #b39dff; }
+html[data-cor='coral'] { --white: #ff8a6b; }
+
+/* ---------- Cores de destaque: tema claro (mais escuras, para ler bem no fundo claro) ---------- */
+html[data-tema='claro'][data-cor='dourado'] { --white: #95620c; }
+html[data-tema='claro'][data-cor='verde'] { --white: #1d7a45; }
+html[data-tema='claro'][data-cor='azul'] { --white: #1f5fbf; }
+html[data-tema='claro'][data-cor='lilas'] { --white: #5b45c4; }
+html[data-tema='claro'][data-cor='coral'] { --white: #bd4328; }
+
+/* ---------- Imagem de fundo ---------- */
+.fundo-tela {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-size: cover; background-position: center;
+}
+.fundo-tela span { position: absolute; inset: 0; background: var(--bg); }
+.shell.com-fundo { background: transparent; }
+.shell.com-fundo > .sidebar,
+.shell.com-fundo > .main { position: relative; z-index: 1; }
+/* Com imagem, cartões e menu ficam translúcidos para a foto aparecer por trás */
+.shell.com-fundo .sidebar,
+.shell.com-fundo .card {
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}

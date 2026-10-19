@@ -26,6 +26,12 @@ No primeiro acesso você cria a conta; depois entra com e-mail e senha. A senha 
 - **Desistir é imediato.** Cancelar um pedido mantém tudo bloqueado.
 - **Pessoa de confiança (opcional).** Ela recebe por e-mail 20 códigos de uso único. Para liberar algo, você clica em *Solicitar permissão*; se ela concordar, responde com um código. Se negar, nova tentativa só depois de mais 7 dias.
 
+## Planos e estilos
+
+- **Gratuito:** até 4 sites, 5 palavras e 2 apps. **Pro:** R$ 9,99 por mês, tudo ilimitado, mais cores, imagem de fundo, mensagens próprias e gráfico de 30 dias.
+- Ainda não existe cobrança: com `COBRANCA_ATIVA = false` (em `src/config.js`) nada é travado. Preço e limites também ficam em `src/config.js`.
+- **Estilos** (Ajustes): tema escuro ou claro, cor de destaque e imagem de fundo. Valem só no painel, depois do login. A imagem é reduzida e guardada no navegador.
+
 ## Estrutura
 
 ```
