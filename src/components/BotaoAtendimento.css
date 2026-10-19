@@ -12,8 +12,8 @@
 }
 
 .atd__botao {
-  width: 58px;
-  height: 58px;
+  width: 46px; /* 20% menor que os 58px do CIFRA */
+  height: 46px;
   border: 2px solid #000;
   border-radius: 50%;
   background: var(--white);
@@ -31,7 +31,7 @@
 .atd__botao--efeito:hover { border-color: transparent; transform: scale(1.08); }
 
 .atd__botao--aberto { background: #000; color: var(--white); border-color: var(--white); }
-.atd__x { font-size: 30px; line-height: 1; }
+.atd__x { font-size: 24px; line-height: 1; }
 
 /* Caixinha com as opções */
 .atd__caixa {
@@ -77,7 +77,7 @@
 
 @media (max-width: 560px) {
   .atd { right: 14px; bottom: 14px; }
-  .atd__botao { width: 52px; height: 52px; }
+  .atd__botao { width: 42px; height: 42px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -104,7 +104,7 @@ export default function BotaoAtendimento() {
         title="Atendimento"
         onClick={() => setAberto(!aberto)}
       >
-        {aberto ? <span className="atd__x" aria-hidden="true">×</span> : <IconeAtendimento tamanho={26} />}
+        {aberto ? <span className="atd__x" aria-hidden="true">×</span> : <IconeAtendimento tamanho={21} />}
       </button>
     </div>
   );
