@@ -30,7 +30,7 @@ test('liberar só depois de 7 dias e com a senha', async () => {
   s.passwordHash = await R.hashPassword('segredo1');
   R.addItem(s, 'sites', 'youtube.com', null, t0);
   const r = R.requestRemoval(s, 'sites', 'youtube.com', t0);
-  await assert.rejects(R.applyRequest(s, r.id, 'segredo1', t0 + 6 * R.DAY), /7 dias/);
+  await assert.rejects(R.applyRequest(s, r.id, 'segredo1', t0 + 6 * R.DAY), /prazo de 7 dias ainda não terminou\. Falta 1 dia/);
   await assert.rejects(R.applyRequest(s, r.id, 'errada', t0 + 7 * R.DAY), /Senha/);
   await R.applyRequest(s, r.id, 'segredo1', t0 + 7 * R.DAY);
   assert.equal(s.lists.sites.length, 0);
@@ -110,4 +110,42 @@ test('conta criada depois de já existir senha usa a mesma senha', async () => {
   await assert.rejects(R.createAccount(s, { name: 'Ryan', email: 'r@x.com', password: 'nova123' }), /senha de controle/);
   await R.createAccount(s, { name: 'Ryan', email: 'r@x.com', password: 'antiga1' });
   assert.ok(s.account);
+});
+
+test('prazo de espera: aumentar vale na hora, diminuir vira pedido', async () => {
+  const t0 = Date.UTC(2026, 9, 18, 12);
+  const s = R.defaultState(t0);
+  s.passwordHash = await R.hashPassword('segredo1');
+  assert.equal(s.delayDays, 7);
+  assert.throws(() => R.setDelay(s, 3, t0), /entre 4 e 90/);
+  assert.throws(() => R.setDelay(s, 7, t0), /já é de 7/);
+
+  // aumentar: imediato e vale para os próximos pedidos
+  assert.equal(R.setDelay(s, 14, t0).applied, true);
+  R.addItem(s, 'sites', 'instagram.com', null, t0);
+  const r = R.requestRemoval(s, 'sites', 'instagram.com', t0);
+  assert.equal(r.availableAt, t0 + 14 * R.DAY);
+  assert.equal(R.requestDays(r), 14);
+
+  // diminuir: pedido que espera o prazo atual (14 dias)
+  const d = R.setDelay(s, 4, t0);
+  assert.equal(d.applied, false);
+  assert.equal(s.delayDays, 14);
+  assert.equal(d.request.availableAt, t0 + 14 * R.DAY);
+  assert.throws(() => R.setDelay(s, 5, t0), /Já existe um pedido/);
+  await assert.rejects(R.applyRequest(s, d.request.id, 'segredo1', t0 + 13 * R.DAY), /Faltam|Falta/);
+  await R.applyRequest(s, d.request.id, 'segredo1', t0 + 14 * R.DAY);
+  assert.equal(s.delayDays, 4);
+  // o pedido antigo mantém o prazo dele
+  assert.equal(R.requestDays(r), 14);
+
+  // aumentar cancela um pedido aberto para diminuir
+  R.setDelay(s, 30, t0);
+  const d2 = R.setDelay(s, 7, t0);
+  R.setDelay(s, 60, t0);
+  assert.equal(s.requests.find((x) => x.id === d2.request.id).status, 'cancelled');
+  assert.equal(R.publicState(s, {}, t0).delayDays, 60);
+
+  // valor estranho salvo volta ao padrão
+  assert.equal(R.migrate({ delayDays: 2 }).delayDays, 7);
 });

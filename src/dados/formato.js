@@ -54,4 +54,6 @@ export function mensagemDoDia(S) {
   return all[seed % all.length] || '';
 }
 
+// Dias de espera de um pedido (cada pedido guarda o prazo que valia quando foi feito)
+export function diasDoPedido(r) { return Math.round((r.availableAt - r.createdAt) / DAY); }
 export function pedidoAberto(r) { return r.status === 'pending' || r.status === 'ready'; }

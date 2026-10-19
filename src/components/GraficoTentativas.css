@@ -1,0 +1,49 @@
+/* ===== Painel › Tentativas bloqueadas (uma série, sem legenda) ===== */
+.grafico .card-head { align-items: flex-start; gap: 12px; }
+.grafico .seg { height: 34px; }
+.grafico .seg button { padding: 0 12px; font-size: 13px; }
+
+.grafico-resumo { display: grid; grid-template-columns: 1.3fr repeat(4, 1fr); margin: 4px 0 18px; border: 1px solid var(--line); }
+.grafico-resumo div { padding: 10px 14px; min-width: 0; }
+.grafico-resumo div + div { border-left: 1px solid var(--line); }
+.grafico-resumo dt { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.grafico-resumo dd { margin: 4px 0 0; font-family: var(--mono); font-size: 20px; font-weight: 500; white-space: nowrap; }
+.grafico-resumo .destaque dd { font-size: 28px; line-height: 1; }
+.grafico-resumo small { font-size: 12px; color: var(--muted); }
+
+.barras { display: grid; grid-template-columns: auto 1fr; gap: 10px; height: 180px; }
+.barras-escala { display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 22px; font-family: var(--mono); font-size: 10px; color: var(--dim); text-align: right; }
+.barras-area { position: relative; display: grid; gap: 10px; align-items: end; height: 100%; }
+.barras.mes .barras-area { gap: 4px; }
+/* linha-guia do topo da escala (recessiva) */
+.barras-guia { position: absolute; left: 0; right: 0; top: 0; border-top: 1px dashed var(--line); pointer-events: none; }
+
+.barra-col { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; cursor: default; }
+.barra-trilho { width: 100%; flex: 1; display: flex; align-items: flex-end; justify-content: center; border-bottom: 1px solid var(--line-strong); }
+.barra { width: 60%; max-width: 34px; min-height: 2px; background: var(--white); border-radius: 4px 4px 0 0; transition: opacity .15s; }
+.barras.mes .barra { width: 100%; max-width: 18px; }
+.barra.zero { background: var(--line-strong); }
+.barra-col:hover .barra { opacity: .75; }
+.barra-col:hover .barra-trilho { background: rgba(255, 255, 255, .04); }
+.barra-lbl { font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; height: 14px; }
+.barra-col.hoje .barra-lbl { color: var(--text); }
+
+.barra-tip {
+  position: absolute; bottom: calc(100% - 4px); left: 50%; transform: translateX(-50%); z-index: 2;
+  display: grid; gap: 2px; background: var(--white); color: #000; font-size: 12px; white-space: nowrap;
+  padding: 6px 9px; border-radius: 2px; opacity: 0; pointer-events: none; transition: opacity .12s;
+}
+.barra-tip b { font-weight: 600; }
+.barra-tip span { color: #444; }
+.barra-col.esq .barra-tip { left: 0; transform: none; }
+.barra-col.dir .barra-tip { left: auto; right: 0; transform: none; }
+.barra-col:hover .barra-tip { opacity: 1; }
+
+@media (max-width: 720px) {
+  .grafico-resumo { grid-template-columns: repeat(2, 1fr); }
+  .grafico-resumo div + div { border-left: 0; }
+  .grafico-resumo div { border-top: 1px solid var(--line); }
+  .grafico-resumo .destaque { grid-column: 1 / -1; border-top: 0; }
+  .grafico-resumo div:nth-child(odd):not(.destaque) { border-left: 1px solid var(--line); }
+  .barras.mes .barras-area { gap: 2px; }
+}

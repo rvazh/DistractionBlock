@@ -22,6 +22,7 @@ No primeiro acesso você cria a conta; depois entra com e-mail e senha. A senha 
 
 - **Bloquear é imediato.** Adicionar um site ou uma palavra vale na hora.
 - **Liberar leva 7 dias.** Você faz o pedido em *Liberações* e, depois de 7 dias, confirma com a senha.
+- **O prazo é ajustável** em *Ajustes › Prazo para liberar*: 4, 7, 14, 30 dias ou outro número (de 4 a 90). Aumentar vale na hora. Diminuir também é uma liberação: espera o prazo atual (e a aprovação da pessoa de confiança, se houver) e é confirmado com a senha. Pedidos já abertos mantêm o prazo com que foram feitos.
 - **Desistir é imediato.** Cancelar um pedido mantém tudo bloqueado.
 - **Pessoa de confiança (opcional).** Ela recebe por e-mail 20 códigos de uso único. Para liberar algo, você clica em *Solicitar permissão*; se ela concordar, responde com um código. Se negar, nova tentativa só depois de mais 7 dias.
 

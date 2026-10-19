@@ -61,7 +61,7 @@ export default function Baixar() {
           <div className="baixar-cartao-texto">
             <span className="baixar-numero invertido">02</span>
             <h2>Crie a sua conta e entre no painel</h2>
-            <p className="s-texto">Nome, e-mail e senha. A senha é a mesma que confirma cada liberação, depois dos 7 dias. A conta fica só neste navegador.</p>
+            <p className="s-texto">Nome, e-mail e senha. A senha é a mesma que confirma cada liberação, depois do prazo de espera (7 dias, ou o que você escolher em Ajustes). A conta fica só neste navegador.</p>
             <p className="s-texto">Quer o painel numa janela própria? Em Ajustes, clique em <b>Instalar o Distraction Block</b>.</p>
             <div className="baixar-botoes">
               <Link className="sbtn sbtn-branco grande" to="/cadastro">Criar conta</Link>

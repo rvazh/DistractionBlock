@@ -19,7 +19,16 @@ export default function Cadastro() {
   const [erro, setErro] = useState('');
   const [ocupado, setOcupado] = useState(false);
 
-  if (S.account) return <Navigate to={S.logado ? destino : '/entrar'} replace state={location.state} />;
+  if (S.account && S.logado) return <Navigate to={destino} replace />;
+  // Uma conta por navegador: se já existe, explica e leva para Entrar
+  if (S.account) {
+    return (
+      <Acesso rotulo="Criar conta" titulo="Já existe uma conta aqui." texto={`Este navegador já tem a conta de ${S.account.name} (${S.account.email}). Cada navegador guarda uma conta só, junto com os bloqueios dela.`}>
+        <Link className="btn primary acesso-criar" to="/entrar" state={location.state}>Entrar como {S.account.name.split(' ')[0]}</Link>
+        <p className="acesso-dica" style={{ marginTop: 14 }}>Quer outra conta? Use outro navegador ou outro perfil do navegador.</p>
+      </Acesso>
+    );
+  }
 
   async function enviar(e) {
     e.preventDefault();
@@ -41,19 +50,19 @@ export default function Cadastro() {
   return (
     <Acesso
       rotulo="Criar conta"
-      titulo="Mire no que importa."
+      titulo={jaTinhaSenha ? 'Complete a sua conta.' : 'Crie a sua conta.'}
       texto={jaTinhaSenha
         ? 'Complete a sua conta com nome e e-mail. Use a senha de controle que você já criou.'
-        : 'Crie a sua conta para abrir o painel. A senha também é a que confirma cada liberação, depois dos 7 dias.'}
+        : 'Só o básico: nome, e-mail e uma senha. A senha também confirma cada liberação, depois do prazo de espera.'}
     >
       <form className="acesso-campos" onSubmit={enviar}>
         <label className="field">
           <span className="tag">Nome</span>
-          <input className="input" autoComplete="name" required autoFocus value={nome} onChange={(e) => setNome(e.target.value)} />
+          <input className="input" autoComplete="name" placeholder="Como quer ser chamado" required autoFocus value={nome} onChange={(e) => setNome(e.target.value)} />
         </label>
         <label className="field">
           <span className="tag">E-mail</span>
-          <input className="input" type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input className="input" type="email" autoComplete="username" placeholder="voce@exemplo.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
         </label>
         <label className="field">
           <span className="tag">{jaTinhaSenha ? 'Senha de controle atual' : 'Senha (mín. 6 caracteres)'}</span>
@@ -75,8 +84,9 @@ export default function Cadastro() {
         <button className="btn primary" type="submit" disabled={ocupado}>{ocupado ? 'Criando…' : 'Criar conta e entrar'}</button>
       </form>
       <p className="acesso-rodape">
-        A conta fica só neste navegador, sem servidor. {S.hasPassword && <>Já tem conta? <Link to="/entrar">Entrar</Link></>}
+        Já tem conta? <Link to="/entrar" state={location.state}>Entrar</Link>
       </p>
+      <p className="acesso-dica" style={{ marginTop: 10 }}>A conta fica só neste navegador, sem servidor.</p>
     </Acesso>
   );
 }

@@ -1,0 +1,25 @@
+/* ===== Painel › Até poder liberar ===== */
+.contagens { list-style: none; margin: 0; padding: 0; }
+.contagem { padding: 14px 0; border-top: 1px solid var(--line); }
+.contagem:first-child { border-top: 0; padding-top: 2px; }
+.contagem-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.contagem-titulo { font-weight: 600; font-size: 14px; min-width: 0; overflow-wrap: anywhere; }
+.contagem-titulo code { font-family: var(--mono); font-size: 13px; }
+
+/* Um quadrado por dia: cumprido (✓), hoje (tracejado) e os que faltam */
+.dias { list-style: none; margin: 12px 0 10px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); gap: 6px; max-width: 560px; }
+.dias li {
+  aspect-ratio: 1; max-height: 40px; border: 1px solid var(--line-strong); border-radius: 2px;
+  display: grid; place-items: center;
+  font-family: var(--mono); font-size: 11px; color: var(--dim);
+}
+.dias li.feito { background: var(--white); border-color: var(--white); color: #000; font-weight: 500; font-size: 13px; }
+.dias li.hoje { border: 1px dashed var(--white); color: var(--text); }
+.dias.compacto { grid-template-columns: repeat(auto-fill, minmax(14px, 1fr)); gap: 4px; }
+.dias.compacto li { max-height: 18px; }
+
+.contagem-rodape { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; color: var(--muted); font-size: 12px; }
+.contagem-rodape .falta { color: var(--text); }
+.contagem-rodape .falta::before { content: '· '; color: var(--dim); }
+.contagem-rodape .btn { margin-left: auto; }
+.contagem-mais { margin-top: 6px; }

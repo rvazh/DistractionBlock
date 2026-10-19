@@ -4,7 +4,7 @@ import Modal, { BotaoModal } from './Modal.jsx';
 import { Citacao } from './Pecas.jsx';
 import { useEstado } from '../contexto/Estado.jsx';
 import { useUI } from '../contexto/UI.jsx';
-import { DAY, firstName, fmtDate, mensagemAleatoria } from '../dados/formato.js';
+import { DAY, diasDoPedido, firstName, fmtDate, mensagemAleatoria } from '../dados/formato.js';
 
 export function PedirLiberacao({ lista, valor, oQue }) {
   const { S, acoes } = useEstado();
@@ -40,7 +40,7 @@ export function ConfirmarLiberacao({ pedido }) {
   return (
     <Modal
       tag="Última chance"
-      title="Ainda quer liberar?"
+      title={pedido.kind === 'delay' ? `Ainda quer diminuir para ${pedido.days} dias?` : 'Ainda quer liberar?'}
       actions={
         <>
           <BotaoModal
@@ -48,7 +48,7 @@ export function ConfirmarLiberacao({ pedido }) {
             onClick={async () => {
               try {
                 await acoes.liberar(pedido.id, senha);
-                toast('Liberado.');
+                toast(pedido.kind === 'delay' ? `Pronto. O prazo agora é de ${pedido.days} dias.` : 'Liberado.');
                 return true;
               } catch (e) {
                 setErro(e.message);
@@ -64,7 +64,7 @@ export function ConfirmarLiberacao({ pedido }) {
         </>
       }
     >
-      <p>Faz {S.delayDays} dias que você pediu isso. Se a vontade passou, mantenha bloqueado: é exatamente para isso que o prazo existe.</p>
+      <p>Faz {diasDoPedido(pedido)} dias que você pediu isso. Se a vontade passou, mantenha bloqueado: é exatamente para isso que o prazo existe.</p>
       <Citacao pequena>{frase}</Citacao>
       <label className="field">
         <span className="tag">Senha</span>

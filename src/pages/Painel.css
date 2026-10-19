@@ -26,22 +26,6 @@
 .status-row .txt b { display: block; font-weight: 600; font-size: 14px; }
 .status-row .txt span { color: var(--muted); font-size: 12px; }
 
-/* Barras da semana (série única, sem legenda) */
-.week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; align-items: end; height: 150px; padding-top: 8px; }
-.week .col { display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end; position: relative; cursor: default; }
-.week .bar-wrap { width: 100%; flex: 1; display: flex; align-items: flex-end; justify-content: center; border-bottom: 1px solid var(--line-strong); }
-.week .bar { width: 60%; max-width: 34px; min-height: 2px; background: var(--white); border-radius: 4px 4px 0 0; transition: opacity .15s; }
-.week .bar.zero { background: var(--line-strong); }
-.week .col:hover .bar { opacity: .75; }
-.week .lbl { font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; }
-.week .col.today .lbl { color: var(--text); }
-.week .tip {
-  position: absolute; bottom: calc(100% - 6px); left: 50%; transform: translateX(-50%);
-  background: var(--white); color: #000; font-size: 12px; font-weight: 600; white-space: nowrap;
-  padding: 4px 8px; border-radius: 2px; opacity: 0; pointer-events: none; transition: opacity .12s;
-}
-.week .col:hover .tip { opacity: 1; }
-
 .quote { font-size: 18px; line-height: 1.45; font-weight: 500; margin: 6px 0 0; text-wrap: balance; }
 
 .events { list-style: none; margin: 0; padding: 0; }

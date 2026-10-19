@@ -1,11 +1,11 @@
-// Painel: bloqueios de hoje, status da proteção, últimos 7 dias e a mensagem do dia
+// Painel: bloqueios de hoje, status da proteção, contagem até liberar, tentativas bloqueadas e a mensagem do dia
 import { Link } from 'react-router-dom';
 import { useEstado } from '../contexto/Estado.jsx';
 import { PageHead, Reticulo, Vazio } from '../components/Pecas.jsx';
-import { fmtDate, fmtTime, isToday, mensagemDoDia, pad, pedidoAberto, plural, TYPE_LABEL } from '../dados/formato.js';
+import ContagemLiberacao from '../components/ContagemLiberacao.jsx';
+import GraficoTentativas from '../components/GraficoTentativas.jsx';
+import { fmtDate, fmtTime, isToday, mensagemDoDia, pedidoAberto, plural, TYPE_LABEL } from '../dados/formato.js';
 import './Painel.css';
-
-const DIAS_DA_SEMANA = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 
 function saudacao(nome) {
   const h = new Date().getHours();
@@ -29,7 +29,6 @@ export default function Painel() {
   const ext = S.extensao;
   const abertos = S.requests.filter(pedidoAberto);
   const semana = st.week.reduce((soma, d) => soma + d.count, 0);
-  const maior = Math.max(1, ...st.week.map((d) => d.count));
   const frase = st.today === 0
     ? 'Nenhuma distração passou pela mira hoje. Siga assim.'
     : `Você disse não para ${plural(st.today, 'distração', 'distrações')} hoje.`;
@@ -90,30 +89,16 @@ export default function Painel() {
         </div>
       </div>
 
-      <div className="grid g-dash" style={{ marginTop: 16 }}>
-        <div className="card">
-          <div className="card-head">
-            <h2>Últimos 7 dias</h2>
-            <span className="tag">{st.total} no total · {plural(st.activeDays, 'dia', 'dias')} de proteção</span>
-          </div>
-          <div className="week" role="img" aria-label="Bloqueios por dia nos últimos 7 dias">
-            {st.week.map((d) => {
-              const altura = d.count ? Math.max(4, Math.round((d.count / maior) * 100)) : 0;
-              const dia = new Date(d.start);
-              return (
-                <div key={d.start} className={'col' + (isToday(d.start) ? ' today' : '')}>
-                  <span className="tip">{plural(d.count, 'bloqueio', 'bloqueios')} · {pad(dia.getDate())}/{pad(dia.getMonth() + 1)}</span>
-                  <div className="bar-wrap"><div className={'bar' + (d.count ? '' : ' zero')} style={{ height: `${altura}%` }} /></div>
-                  <span className="lbl">{DIAS_DA_SEMANA[dia.getDay()]}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+      <div className="grid g-dash" style={{ marginTop: 16, alignItems: 'start' }}>
+        <ContagemLiberacao />
         <div className="card frame">
           <p className="tag">Mensagem do dia</p>
           <p className="quote">{mensagemDoDia(S)}</p>
         </div>
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <GraficoTentativas />
       </div>
 
       <div className="card" style={{ marginTop: 16 }}>

@@ -6,7 +6,7 @@ import { useUI } from '../contexto/UI.jsx';
 import Modal, { BotaoModal } from '../components/Modal.jsx';
 import { PageHead, Vazio } from '../components/Pecas.jsx';
 import { ConfirmarLiberacao, InserirCodigo, RegistrarNegacao } from '../components/Pedidos.jsx';
-import { firstName, fmtDate, fmtDateTime, fmtLeft, initials, LIST_NAMES, mailto, pedidoAberto, plural } from '../dados/formato.js';
+import { diasDoPedido, firstName, fmtDate, fmtDateTime, fmtLeft, initials, LIST_NAMES, mailto, pedidoAberto, plural } from '../dados/formato.js';
 import './Liberacoes.css';
 
 // Abre o programa de e-mail (ou o Gmail, se for o padrão do navegador)
@@ -17,11 +17,13 @@ function abrirEmail(link) {
 /* ---------- Textos de cada pedido ---------- */
 function oQue(S, r) {
   if (r.kind === 'trusted') return 'remover você como pessoa de confiança';
+  if (r.kind === 'delay') return `diminuir o prazo para liberar de ${r.from} para ${r.days} dias`;
   return `liberar ${LIST_NAMES[r.list] || ''} ${r.value}`;
 }
 
 export function TituloPedido({ r }) {
   if (r.kind === 'trusted') return <>Remover a pessoa de confiança <code>{r.value}</code></>;
+  if (r.kind === 'delay') return <>Diminuir o prazo para liberar de {r.from} para <code>{r.days} dias</code></>;
   return <>Liberar {LIST_NAMES[r.list] || ''} <code>{r.value}</code></>;
 }
 
@@ -289,7 +291,7 @@ export default function Liberacoes() {
                 <span className="left">{prazoOk ? 'prazo cumprido' : 'faltam ' + fmtLeft(r.availableAt - agora)}</span>
               </div>
               <div className="checks">
-                <Check ok={prazoOk} label={`Prazo de ${S.delayDays} dias`} valor={prazoOk ? 'cumprido' : 'em andamento'} />
+                <Check ok={prazoOk} label={`Prazo de ${diasDoPedido(r)} dias`} valor={prazoOk ? 'cumprido' : 'em andamento'} />
                 {aprovacao}
                 {botoes && <div className="check-actions">{botoes}</div>}
               </div>
@@ -307,7 +309,7 @@ export default function Liberacoes() {
                 <span><TituloPedido r={r} /></span>
                 <span>
                   <span className={'pill' + (r.status === 'applied' ? '' : r.status === 'denied' ? ' alert' : ' solid')}>
-                    {{ applied: 'Liberado', cancelled: 'Mantido', denied: 'Negado' }[r.status]}
+                    {{ applied: r.kind === 'delay' ? 'Aplicado' : 'Liberado', cancelled: 'Mantido', denied: 'Negado' }[r.status]}
                   </span>
                   {' '}{r.closedAt ? fmtDate(r.closedAt) : ''}
                   {r.status === 'denied' && r.retryAt > agora ? ` · nova tentativa em ${fmtDate(r.retryAt)}` : ''}

@@ -77,7 +77,7 @@ export default function Bloqueios() {
       <PageHead
         tag="Bloqueios"
         title="Bloqueios"
-        desc="Sites e palavras pesquisadas num só lugar. Bloquear vale na hora; liberar leva 7 dias."
+        desc={`Sites e palavras pesquisadas num só lugar. Bloquear vale na hora; liberar leva ${S.delayDays} dias.`}
         right={!S.extensao ? <Link className="btn sm" to="/painel/ajustes">Extensão desconectada</Link> : null}
       />
 

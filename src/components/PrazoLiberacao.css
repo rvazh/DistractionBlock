@@ -1,0 +1,28 @@
+/* ===== Ajustes › Prazo para liberar ===== */
+.prazo-form { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 4px; }
+.prazo-seg button { font-variant-numeric: tabular-nums; }
+.prazo-outro { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+.prazo-outro .input { width: 96px; height: 40px; }
+.prazo-form + .form-error:empty { display: none; }
+
+.prazo-pedido {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.prazo-pedido div { display: grid; gap: 2px; }
+.prazo-pedido b { font-weight: 600; }
+.prazo-pedido span { color: var(--muted); font-size: 12px; }
+
+@media (max-width: 560px) {
+  .seg.prazo-seg { display: grid; grid-template-columns: repeat(5, 1fr); width: 100%; }
+  .seg.prazo-seg button { padding: 0 4px; font-size: 13px; }
+  .prazo-outro { flex: 1; }
+  .prazo-form > .btn { width: 100%; }
+}

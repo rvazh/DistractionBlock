@@ -116,12 +116,20 @@ button, input, textarea, select { font: inherit; color: inherit; }
 
 .grid { display: grid; gap: 16px; }
 .g-dash { grid-template-columns: 1.35fr 1fr; }
+/* Conteúdo longo não alarga a coluna (evita cartões cortados no celular) */
+.grid > * { min-width: 0; }
 .g-3 { grid-template-columns: repeat(3, 1fr); }
 .g-2 { grid-template-columns: repeat(2, 1fr); }
 
 /* ===== Listas ===== */
 .add-row { display: flex; gap: 10px; }
 .add-row .input { flex: 1; }
+/* Botões de escolha única (Bloqueios: tipo; Ajustes: prazo) */
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 3px; gap: 2px; background: var(--surface-2); height: 40px; box-sizing: border-box; }
+.seg button { border: 0; background: none; color: var(--muted); padding: 0 14px; border-radius: 2px; font-weight: 600; cursor: pointer; }
+.seg button:hover { color: var(--text); }
+.seg button.on { background: var(--white); color: #000; }
+
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .chip {
   height: 30px; padding: 0 12px; border-radius: 2px;

@@ -34,7 +34,7 @@ const RECURSOS = [
   },
   {
     titulo: 'Pessoa de confiança',
-    texto: 'Alguém que precisa aprovar cada liberação. Se ela negar, nova tentativa só depois de mais 7 dias.',
+    texto: 'Alguém que precisa aprovar cada liberação. Se ela negar, nova tentativa só depois de mais um prazo de espera.',
     icone: <><circle cx="11" cy="11" r="5" /><circle cx="22" cy="13" r="4" /><path d="M2 27c0-5 4-9 9-9s9 4 9 9M18 27c0-3 2-6 5-6s6 3 6 6" /></>,
   },
   {
@@ -44,13 +44,14 @@ const RECURSOS = [
   },
   {
     titulo: 'Seus dados ficam com você',
-    texto: 'Sem conta e sem servidor: listas, senha e histórico ficam só no seu navegador.',
+    texto: 'Sem servidor: conta, listas, senha e histórico ficam só no seu navegador.',
     icone: <><rect x="6" y="14" width="20" height="14" rx="3" /><path d="M10 14v-4a6 6 0 0 1 12 0v4" /><line x1="16" y1="19" x2="16" y2="23" /></>,
   },
 ];
 
 const DUVIDAS = [
   ['Por que esperar 7 dias para liberar?', 'Porque a vontade de se distrair dura minutos. Se uma semana depois você ainda quiser liberar, provavelmente é uma decisão de verdade, e não um impulso.'],
+  ['Dá para mudar os 7 dias?', 'Dá. Em Ajustes você escolhe 4, 7, 14, 30 dias ou outro número, até 90. Aumentar vale na hora. Diminuir também é uma liberação: espera o prazo atual e você confirma com a senha.'],
   ['E se eu esquecer a senha?', 'Não existe recuperação, para que ninguém (nem você num momento de fraqueza) consiga contornar o bloqueio. Guarde a senha em um lugar seguro.'],
   ['Funciona em quais navegadores?', 'Chrome, Edge, Brave e Opera no computador, com a extensão do Distraction Block instalada.'],
   ['Meus dados vão para algum servidor?', 'Não. A conta, as listas, a senha e o histórico ficam só no seu navegador. O site conversa apenas com a extensão instalada nele.'],
@@ -100,7 +101,7 @@ export default function Inicio() {
             <p className="inicio-lead">Bloqueie sites e até palavras pesquisadas. Bloquear vale na hora. Liberar, <b>só depois de 7 dias</b>.</p>
             <ul className="inicio-checks">
               <li><Check />Sites e pesquisas num só lugar</li>
-              <li><Check />Regra dos 7 dias para qualquer liberação</li>
+              <li><Check />Prazo de 4, 7, 14 ou 30 dias para qualquer liberação</li>
               <li><Check />Uma mensagem de melhora a cada bloqueio</li>
             </ul>
             <div className="inicio-botoes">
@@ -155,7 +156,7 @@ export default function Inicio() {
         <h2 id="regra-t" className="s-rotulo">A regra que muda tudo</h2>
         <div className="inicio-regra-grade">
           <div><span className="mono">01 · Bloquear</span><strong>Na hora.</strong><p>Adicionou um site ou uma palavra? Já está valendo.</p></div>
-          <div><span className="mono">02 · Liberar</span><strong>7 dias.</strong><p>Você faz o pedido, espera uma semana e confirma com a senha.</p></div>
+          <div><span className="mono">02 · Liberar</span><strong>7 dias.</strong><p>Você faz o pedido, espera uma semana e confirma com a senha. Prefere outro prazo? Escolha em Ajustes.</p></div>
           <div><span className="mono">03 · Desistir</span><strong>Na hora.</strong><p>A vontade passou? Cancele o pedido e siga bloqueado.</p></div>
         </div>
       </section>

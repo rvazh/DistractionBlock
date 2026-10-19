@@ -1,9 +1,10 @@
-// Ajustes: instalar como app, extensão do navegador, senha e pessoa de confiança
+// Ajustes: prazo para liberar, conta, senha, extensão, instalação e pessoa de confiança
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useEstado } from '../contexto/Estado.jsx';
 import { useUI } from '../contexto/UI.jsx';
 import { PageHead } from '../components/Pecas.jsx';
+import PrazoLiberacao from '../components/PrazoLiberacao.jsx';
 import { abertoComoApp, aparelhoAtual, instalarApp, podeInstalar } from '../dados/instalar.js';
 import { REPO_URL } from '../config.js';
 import './Ajustes.css';
@@ -67,7 +68,7 @@ function MinhaConta() {
   }
 
   return (
-    <div className="card frame" id="conta">
+    <div className="card" id="conta">
       <div className="card-head">
         <h2>Minha conta</h2>
         <span className={'pill' + (semConta ? ' alert' : ' solid')}>{semConta ? 'Incompleta' : 'Neste navegador'}</span>
@@ -112,9 +113,11 @@ export default function Ajustes() {
 
   return (
     <section className="page">
-      <PageHead tag="Ajustes" title="Ajustes" desc="Conta, senha, extensão e instalação." />
+      <PageHead tag="Ajustes" title="Ajustes" desc="Prazo para liberar, conta, senha, extensão e instalação." />
 
-      <div className="grid g-2" style={{ marginBottom: 16 }}>
+      <PrazoLiberacao />
+
+      <div className="grid g-2" style={{ margin: '16px 0' }}>
         <MinhaConta />
         <div className="card" id="senha">
           <h2>Trocar senha</h2>
@@ -161,7 +164,7 @@ export default function Ajustes() {
           <p className="sub">
             {S.trusted
               ? `${S.trusted.name} precisa aprovar cada liberação. Se negar, uma nova tentativa só depois de mais ${S.delayDays} dias.`
-              : 'Alguém que precisa concordar antes de qualquer liberação. Se negar, uma nova tentativa só depois de mais 7 dias.'}
+              : `Alguém que precisa concordar antes de qualquer liberação. Se negar, uma nova tentativa só depois de mais ${S.delayDays} dias.`}
           </p>
           <Link className="btn" to="/painel/liberacoes">{S.trusted ? 'Ver em Liberações' : 'Adicionar em Liberações'}</Link>
         </div>

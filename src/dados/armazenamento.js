@@ -174,6 +174,8 @@ export const acoes = {
   pedirLiberacao: (lista, valor) => mudar((s) => { exigirSenha(s); return R.requestRemoval(s, lista, valor); }),
   desistir: (id) => mudar((s) => R.cancelRequest(s, id)),
   liberar: (id, senha) => mudar((s) => R.applyRequest(s, id, senha)),
+  // Aumentar vale na hora; diminuir vira um pedido de liberação
+  mudarPrazo: (dias) => mudar((s) => { exigirSenha(s); return R.setDelay(s, dias); }),
 
   adicionarPessoa: (dados) => mudar((s) => R.setTrusted(s, dados)),
   pedirRemocaoPessoa: () => mudar((s) => { exigirSenha(s); return R.requestTrustedRemoval(s); }),

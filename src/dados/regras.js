@@ -1,7 +1,8 @@
 /*
  * ===== Regras do Distraction Block =====
  * Princípio: deixar mais rígido é imediato; afrouxar exige um pedido
- * que só pode ser aplicado depois de 7 dias, com a senha
+ * que só pode ser aplicado depois do prazo de espera (7 dias por padrão,
+ * escolhido em Ajustes), com a senha
  * (e com a aprovação da pessoa de confiança, se houver uma).
  * Funções puras sobre o "estado"; quem salva no navegador é armazenamento.js.
  */
@@ -12,8 +13,17 @@ const { normText, normSite } = DBMatch;
 const enc = new TextEncoder();
 
 export const DAY = 24 * 60 * 60 * 1000;
-export const DELAY_MS = DIAS_DE_ESPERA * DAY;
+export const DELAY_MS = DIAS_DE_ESPERA * DAY; // prazo padrão
 export const LISTS = ['sites', 'words'];
+
+/* Prazo de espera escolhido em Ajustes */
+export const DELAY_OPTIONS = [4, 7, 14, 30];
+export const MIN_DELAY_DAYS = 4;
+export const MAX_DELAY_DAYS = 90;
+function validDelay(d) { return Number.isInteger(d) && d >= MIN_DELAY_DAYS && d <= MAX_DELAY_DAYS; }
+export function delayMs(state) { return (validDelay(state.delayDays) ? state.delayDays : DIAS_DE_ESPERA) * DAY; }
+// Dias de espera de um pedido (cada pedido guarda o prazo que valia quando foi feito)
+export function requestDays(r) { return Math.round((r.availableAt - r.createdAt) / DAY); }
 
 /* ---------- Utilidades de criptografia ---------- */
 function bytes(n) { return crypto.getRandomValues(new Uint8Array(n)); }
@@ -30,6 +40,7 @@ export function defaultState(now = Date.now()) {
     passwordHash: null,
     account: null,       // { name, email, createdAt }
     loginLock: null,     // { fails, until } — tentativas erradas de entrar
+    delayDays: DIAS_DE_ESPERA, // prazo para liberar, escolhido em Ajustes
     sessionId: null,     // muda a cada login; a sessão aberta guarda o mesmo valor
     lists: { sites: [], words: [] },
     customMessages: [],
@@ -49,6 +60,7 @@ export function migrate(raw, now = Date.now()) {
   for (const k of ['customMessages', 'disabledDefaults', 'requests', 'events']) if (!Array.isArray(s[k])) s[k] = [];
   if (!s.trusted || typeof s.trusted !== 'object') s.trusted = null;
   if (!s.account || typeof s.account !== 'object') s.account = null;
+  if (!validDelay(s.delayDays)) s.delayDays = DIAS_DE_ESPERA;
   return s;
 }
 
@@ -169,7 +181,7 @@ export function addItem(state, list, input, label, now = Date.now()) {
   return item;
 }
 
-/* ---------- Pedidos de liberação (7 dias) ---------- */
+/* ---------- Pedidos de liberação (prazo de espera) ---------- */
 export function requestStatus(r, now = Date.now()) {
   if (r.status === 'pending' && now >= r.availableAt) return 'ready';
   return r.status;
@@ -195,7 +207,7 @@ export function requestRemoval(state, list, value, now = Date.now()) {
   if (!state.lists[list].some((i) => i.value === value)) throw new Error('Item não encontrado.');
   if (hasOpenRequest(state, { kind: 'remove', list, value })) throw new Error('Já existe um pedido para esse item.');
   checkDenied(state, { kind: 'remove', list, value }, now);
-  const r = { id: newId(), kind: 'remove', list, value, createdAt: now, availableAt: now + DELAY_MS, status: 'pending' };
+  const r = { id: newId(), kind: 'remove', list, value, createdAt: now, availableAt: now + delayMs(state), status: 'pending' };
   state.requests.push(r);
   return r;
 }
@@ -212,13 +224,18 @@ export async function applyRequest(state, id, password, now = Date.now()) {
   const r = state.requests.find((x) => x.id === id);
   if (!r) throw new Error('Pedido não encontrado.');
   if (r.status !== 'pending') throw new Error('Esse pedido já foi encerrado.');
-  if (now < r.availableAt) throw new Error(`Ainda não se passaram ${DIAS_DE_ESPERA} dias desde o pedido.`);
+  if (now < r.availableAt) {
+    const faltam = Math.ceil((r.availableAt - now) / DAY);
+    throw new Error(`O prazo de ${requestDays(r)} dias ainda não terminou. ${faltam === 1 ? 'Falta 1 dia' : `Faltam ${faltam} dias`}.`);
+  }
   if (needsApproval(state, r)) throw new Error(`Falta a aprovação de ${state.trusted.name}.`);
   if (!(await verifyPassword(password, state.passwordHash))) throw new Error('Senha incorreta.');
   if (r.kind === 'remove') {
     state.lists[r.list] = state.lists[r.list].filter((i) => i.value !== r.value);
   } else if (r.kind === 'trusted') {
     state.trusted = null;
+  } else if (r.kind === 'delay') {
+    state.delayDays = r.days;
   }
   r.status = 'applied';
   r.closedAt = now;
@@ -298,7 +315,7 @@ export function denyRequest(state, id, now = Date.now()) {
   r.status = 'denied';
   r.approval = 'denied';
   r.closedAt = now;
-  r.retryAt = now + DELAY_MS;
+  r.retryAt = now + delayMs(state);
   if (state.trusted) state.trusted.denials = (state.trusted.denials || 0) + 1;
   return r;
 }
@@ -307,9 +324,34 @@ export function requestTrustedRemoval(state, now = Date.now()) {
   if (!state.trusted) throw new Error('Não há pessoa de confiança cadastrada.');
   if (hasOpenRequest(state, { kind: 'trusted' })) throw new Error('Já existe um pedido para remover a pessoa de confiança.');
   checkDenied(state, { kind: 'trusted' }, now);
-  const r = { id: newId(), kind: 'trusted', value: state.trusted.name, createdAt: now, availableAt: now + DELAY_MS, status: 'pending' };
+  const r = { id: newId(), kind: 'trusted', value: state.trusted.name, createdAt: now, availableAt: now + delayMs(state), status: 'pending' };
   state.requests.push(r);
   return r;
+}
+
+/* ---------- Prazo de espera ----------
+ * Aumentar é mais rígido: vale na hora.
+ * Diminuir é afrouxar: vira um pedido que espera o prazo atual
+ * (com aprovação da pessoa de confiança, se houver) e é confirmado com a senha.
+ */
+export function setDelay(state, days, now = Date.now()) {
+  const d = Number(days);
+  if (!validDelay(d)) throw new Error(`Escolha um prazo entre ${MIN_DELAY_DAYS} e ${MAX_DELAY_DAYS} dias.`);
+  const atual = delayMs(state) / DAY;
+  if (d === atual) throw new Error(`O prazo já é de ${atual} dias.`);
+  if (d > atual) {
+    state.delayDays = d;
+    // Um pedido aberto para diminuir deixa de fazer sentido
+    for (const r of state.requests) {
+      if (r.kind === 'delay' && r.status === 'pending') { r.status = 'cancelled'; r.closedAt = now; }
+    }
+    return { applied: true, days: d };
+  }
+  if (hasOpenRequest(state, { kind: 'delay' })) throw new Error('Já existe um pedido para diminuir o prazo. Desista dele em Liberações para fazer outro.');
+  checkDenied(state, { kind: 'delay' }, now);
+  const r = { id: newId(), kind: 'delay', value: `${d} dias`, days: d, from: atual, createdAt: now, availableAt: now + delayMs(state), status: 'pending' };
+  state.requests.push(r);
+  return { applied: false, request: r };
 }
 
 /* ---------- Mensagens ---------- */
@@ -338,10 +380,11 @@ function startOfDay(t) { const d = new Date(t); d.setHours(0, 0, 0, 0); return d
 
 export function stats(state, now = Date.now()) {
   const today = startOfDay(now);
+  // Últimos 30 dias, um item por dia (as tentativas bloqueadas, separadas por tipo)
   const days = [];
-  for (let i = 6; i >= 0; i--) {
+  for (let i = 29; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
-    days.push({ start: d.getTime(), count: 0 });
+    days.push({ start: d.getTime(), count: 0, site: 0, word: 0 });
   }
   const byType = { site: 0, word: 0 };
   let todayCount = 0;
@@ -349,7 +392,11 @@ export function stats(state, now = Date.now()) {
     if (ev.t >= today) { todayCount++; byType[ev.type] = (byType[ev.type] || 0) + 1; }
     if (ev.t < days[0].start) continue;
     for (let i = days.length - 1; i >= 0; i--) {
-      if (ev.t >= days[i].start) { days[i].count++; break; }
+      if (ev.t >= days[i].start) {
+        days[i].count++;
+        if (ev.type === 'site' || ev.type === 'word') days[i][ev.type]++;
+        break;
+      }
     }
   }
   const sinceDays = Math.floor((today - startOfDay(state.createdAt)) / DAY) + 1;
@@ -357,7 +404,8 @@ export function stats(state, now = Date.now()) {
     today: todayCount,
     byType,
     total: state.events.length,
-    week: days,
+    week: days.slice(-7),
+    month: days,
     recent: state.events.slice(-12).reverse(),
     activeDays: sinceDays
   };
@@ -385,7 +433,10 @@ export function publicState(state, extra = {}, now = Date.now()) {
       .map((r) => ({ ...r, status: requestStatus(r, now), needsApproval: needsApproval(state, r) }))
       .reverse(),
     stats: stats(state, now),
-    delayDays: DELAY_MS / DAY,
+    delayDays: delayMs(state) / DAY,
+    delayOptions: DELAY_OPTIONS,
+    delayMin: MIN_DELAY_DAYS,
+    delayMax: MAX_DELAY_DAYS,
     now,
     ...extra
   };

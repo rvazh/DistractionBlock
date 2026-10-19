@@ -1,4 +1,4 @@
-// Entrar: e-mail e senha para abrir o painel
+// Entrar: e-mail e senha para abrir o painel, com a opção de criar a conta
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Acesso from '../components/Acesso.jsx';
@@ -9,7 +9,8 @@ export default function Entrar() {
   const navigate = useNavigate();
   const location = useLocation();
   const destino = (location.state && location.state.de) || '/painel';
-  const semConta = !S.account; // versão anterior: só existe a senha de controle
+  const semNada = !S.hasPassword; // ainda não existe conta neste navegador
+  const semConta = S.hasPassword && !S.account; // versão anterior: só existe a senha de controle
 
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -18,14 +19,16 @@ export default function Entrar() {
   const [esqueci, setEsqueci] = useState(false);
   const [ocupado, setOcupado] = useState(false);
 
-  // Ainda não tem nada neste navegador: vai para Criar conta
-  if (!S.hasPassword) return <Navigate to="/cadastro" replace state={location.state} />;
   // Já está dentro
   if (S.logado) return <Navigate to={destino} replace />;
 
   async function enviar(e) {
     e.preventDefault();
     setErro('');
+    if (semNada) {
+      setErro('Ainda não existe conta neste navegador. Clique em Criar conta, logo abaixo.');
+      return;
+    }
     setOcupado(true);
     try {
       await acoes.entrar(email, senha, manter);
@@ -39,7 +42,7 @@ export default function Entrar() {
   return (
     <Acesso
       rotulo="Entrar"
-      titulo={S.account ? `Olá de novo, ${S.account.name.split(' ')[0]}.` : 'Bem-vindo de volta.'}
+      titulo={S.account ? `Olá de novo, ${S.account.name.split(' ')[0]}.` : semConta ? 'Bem-vindo de volta.' : 'Bem-vindo.'}
       texto="Entre para ver os seus bloqueios e liberações."
     >
       <form className="acesso-campos" onSubmit={enviar}>
@@ -69,11 +72,13 @@ export default function Entrar() {
         <p className="form-error" role="alert">{erro}</p>
         <button className="btn primary" type="submit" disabled={ocupado}>{ocupado ? 'Entrando…' : 'Entrar'}</button>
       </form>
-      {semConta && (
-        <p className="acesso-rodape">Ainda sem nome e e-mail? Depois de entrar, complete em <b>Ajustes › Minha conta</b>.</p>
-      )}
-      {!semConta && <p className="acesso-dica" style={{ marginTop: 18 }}>A conta fica só neste navegador.</p>}
-      {semConta && <p className="acesso-dica" style={{ marginTop: 12 }}>Ou <Link to="/cadastro" style={{ color: 'inherit' }}>crie a conta com nome e e-mail</Link> usando a mesma senha.</p>}
+      <div className="acesso-ou" role="separator"><span>ou</span></div>
+      <Link className="btn acesso-criar" to="/cadastro" state={location.state}>
+        {semConta ? 'Completar a conta com nome e e-mail' : 'Criar conta'}
+      </Link>
+      <p className="acesso-dica" style={{ marginTop: 14 }}>
+        {S.account ? `Este navegador já tem a conta de ${S.account.name.split(' ')[0]}. ` : ''}A conta fica só neste navegador, sem servidor.
+      </p>
     </Acesso>
   );
 }

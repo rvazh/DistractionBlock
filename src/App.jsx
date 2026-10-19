@@ -16,7 +16,7 @@ function SoLogado({ children }) {
   const { S } = useEstado();
   const { pathname } = useLocation();
   if (S.logado) return children;
-  return <Navigate to={S.hasPassword ? '/entrar' : '/cadastro'} replace state={{ de: pathname }} />;
+  return <Navigate to="/entrar" replace state={{ de: pathname }} />;
 }
 
 export default function App() {
