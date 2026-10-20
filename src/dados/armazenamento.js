@@ -1,7 +1,9 @@
 // ===== Onde ficam os dados do Distraction Block =====
-// Tudo fica neste navegador (localStorage, chave "distraction-block:v1").
+// Bloqueios, listas e senha de controle ficam neste navegador (localStorage, chave "distraction-block:v1").
 // Cada mudança é salva, avisa as telas e manda as listas novas para a extensão.
+// Com o Supabase configurado (config.js), o login é feito na nuvem (nuvem.js).
 import * as R from './regras.js';
+import * as N from './nuvem.js';
 import { MENSAGENS } from './compartilhado.js';
 import { pingExtensao, enviarListas, buscarBloqueios } from './extensao.js';
 
@@ -48,7 +50,13 @@ function lerSessao() {
   }
 }
 
+// Com a nuvem: logado = sessão do Supabase + este navegador ligado à mesma conta.
+// Sem a nuvem: a sessão local de antes.
+let usuarioNuvem = null;
 export function estaLogado() {
+  if (N.NUVEM_ATIVA) {
+    return Boolean(usuarioNuvem && estado.passwordHash && estado.account && estado.account.nuvemId === usuarioNuvem.id);
+  }
   return Boolean(estado.passwordHash && estado.sessionId && lerSessao() === estado.sessionId);
 }
 
@@ -77,6 +85,7 @@ function fecharSessao() {
 export function retrato() {
   return R.publicState(estado, {
     logado: estaLogado(),
+    nuvem: N.NUVEM_ATIVA,
     fundo,
     extensao,
     mensagensPadrao: MENSAGENS,
@@ -146,39 +155,140 @@ function exigirSenha(s) {
   if (!s.passwordHash) throw new Error('Crie a sua senha de controle em Ajustes antes de pedir uma liberação.');
 }
 
+// ===== Abrir o site: confere o login da nuvem (e o link de confirmação do e-mail) =====
+export async function iniciar() {
+  if (!N.NUVEM_ATIVA) return;
+  const user = await N.iniciar((novo) => {
+    usuarioNuvem = novo;
+    avisar();
+  });
+  usuarioNuvem = user;
+  // Veio do link de confirmação e este navegador já tem a conta (criada aqui): liga as duas
+  if (user && estado.account && !estado.account.nuvemId && estado.account.email === String(user.email || '').toLowerCase()) {
+    try {
+      await R.linkCloudAccount(estado, { uid: user.id, name: estado.account.name, email: user.email }, null);
+      salvar();
+    } catch {
+      /* fica para o Entrar */
+    }
+  }
+}
+
 // ===== Ações usadas pelas telas =====
 export const acoes = {
   // Conta e login
-  criarConta: (dados, manter) =>
-    mudar(async (s) => {
+  // Devolve { precisaConfirmar: true } quando o Supabase pede para confirmar o e-mail antes de entrar
+  async criarConta(dados, manter) {
+    if (!N.NUVEM_ATIVA) {
+      await mudar(async (s) => {
+        const primeiraVez = !s.passwordHash;
+        await R.createAccount(s, dados);
+        if (primeiraVez) s.createdAt = Date.now();
+        abrirSessao(manter);
+      });
+      return { precisaConfirmar: false };
+    }
+    if (estado.account) throw new Error('Já existe uma conta neste navegador. Use Entrar.');
+    const erro = R.validateAccountInput(dados);
+    if (erro) throw new Error(erro);
+    if (estado.passwordHash && !(await R.verifyPassword(dados.password, estado.passwordHash))) {
+      throw new Error('Use a senha de controle que você já tinha criado.');
+    }
+    const email = String(dados.email).trim().toLowerCase();
+    N.definirManter(manter);
+    const r = await N.cadastrar({ nome: dados.name.trim(), email, senha: dados.password });
+    await mudar(async (s) => {
       const primeiraVez = !s.passwordHash;
-      await R.createAccount(s, dados);
+      await R.createAccount(s, { ...dados, email });
       if (primeiraVez) s.createdAt = Date.now();
-      abrirSessao(manter);
-    }),
+      if (!r.precisaConfirmar) {
+        await R.linkCloudAccount(s, { uid: r.user.id, name: dados.name, email }, dados.password);
+        usuarioNuvem = r.user;
+      }
+    });
+    return { precisaConfirmar: r.precisaConfirmar, email };
+  },
+
   async entrar(email, senha, manter) {
+    if (!N.NUVEM_ATIVA) {
+      try {
+        await R.login(estado, { email, password: senha });
+      } catch (e) {
+        salvar(); // guarda a contagem de tentativas erradas
+        throw e;
+      }
+      abrirSessao(manter);
+      salvar();
+      avisar();
+      mandarListas();
+      return;
+    }
+    R.checkLoginLock(estado);
+    const mail = String(email || '').trim().toLowerCase();
+    N.definirManter(manter);
+    let user;
     try {
-      await R.login(estado, { email, password: senha });
+      user = await N.entrar(mail, senha);
     } catch (e) {
-      salvar(); // guarda a contagem de tentativas erradas
+      if (e.codigo !== 'invalid_credentials') throw e;
+      // Conta antiga, que só existia neste navegador: sobe para a nuvem com o mesmo e-mail e senha
+      const local = estado.account;
+      if (local && !local.nuvemId && local.email === mail && (await R.verifyPassword(senha, estado.passwordHash))) {
+        const r = await N.cadastrar({ nome: local.name, email: mail, senha });
+        if (r.precisaConfirmar) {
+          const aviso = new Error(`Sua conta agora também fica na nuvem. Enviamos um link de confirmação para ${mail}: abra e entre de novo.`);
+          aviso.confirmar = mail;
+          throw aviso;
+        }
+        user = r.user;
+      } else {
+        const msg = R.registerLoginFail(estado);
+        salvar();
+        throw new Error(msg);
+      }
+    }
+    try {
+      const nome = await N.nomeDoPerfil(user);
+      await R.linkCloudAccount(estado, { uid: user.id, name: nome, email: user.email }, senha);
+    } catch (e) {
+      await N.sair();
       throw e;
     }
-    abrirSessao(manter);
+    usuarioNuvem = user;
     salvar();
     avisar();
     mandarListas();
   },
-  sair() {
+  reenviarConfirmacao: (email) => N.reenviarConfirmacao(email),
+
+  async sair() {
     fecharSessao();
+    if (N.NUVEM_ATIVA) {
+      usuarioNuvem = null;
+      avisar();
+      await N.sair();
+    }
     avisar();
   },
-  atualizarConta: (dados) => mudar((s) => R.updateAccount(s, dados)),
+  atualizarConta: (dados) =>
+    mudar(async (s) => {
+      if (N.NUVEM_ATIVA) {
+        // Na nuvem, o e-mail é o do login: aqui só o nome muda
+        const nome = String((dados && dados.name) || '').trim();
+        if (nome.length < 2) throw new Error('Informe o seu nome.');
+        await N.atualizarNome(nome.slice(0, 60));
+        s.account = { ...s.account, name: nome.slice(0, 60) };
+        return s.account;
+      }
+      return R.updateAccount(s, dados);
+    }),
 
   trocarSenha: (atual, nova) =>
     mudar(async (s) => {
       if (!(await R.verifyPassword(atual, s.passwordHash))) throw new Error('Senha atual incorreta.');
       const erro = R.validateNewPassword(nova);
       if (erro) throw new Error(erro);
+      if (N.NUVEM_ATIVA) await N.trocarSenha(nova); // troca também a senha do login
       s.passwordHash = await R.hashPassword(nova);
     }),
 

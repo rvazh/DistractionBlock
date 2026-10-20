@@ -8,18 +8,25 @@ import './styles/global.css';
 import './styles/estilos.css';
 import './dados/instalar.js'; // já fica de olho no convite de instalação do navegador
 
+import { iniciar } from './dados/armazenamento.js';
+
 // HashRouter (URLs com #/) funciona no GitHub Pages e no Vercel sem configuração extra
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <HashRouter>
-      <EstadoProvider>
-        <UIProvider>
-          <App />
-        </UIProvider>
-      </EstadoProvider>
-    </HashRouter>
-  </React.StrictMode>
-);
+function mostrar() {
+  ReactDOM.createRoot(document.getElementById('root')).render(
+    <React.StrictMode>
+      <HashRouter>
+        <EstadoProvider>
+          <UIProvider>
+            <App />
+          </UIProvider>
+        </EstadoProvider>
+      </HashRouter>
+    </React.StrictMode>
+  );
+}
+
+// Antes de mostrar, confere o login da nuvem (e o link de confirmação do e-mail, se veio de um)
+iniciar().catch(() => {}).finally(mostrar);
 
 // Service worker: permite instalar como app e abrir sem internet
 if ('serviceWorker' in navigator) {

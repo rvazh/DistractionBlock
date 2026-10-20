@@ -26,3 +26,12 @@ export const CIFRA_URL = 'https://cifra-ashen.vercel.app';
 export const COBRANCA_ATIVA = false;
 export const PRECO_PRO = { valor: '9,99', periodo: 'mês' };
 export const LIMITES_GRATIS = { sites: 4, apps: 2, words: 5 };
+
+// ===== Supabase (login e dados de superação na nuvem) =====
+// Copie do painel do Supabase, no projeto do Distraction Block:
+//   Project Settings → API (ou "Connect"): o "Project URL" e a "Publishable key" (sb_publishable_...).
+// As duas PODEM ficar no site: quem protege os dados são as regras (RLS) do banco.
+// NUNCA coloque aqui a chave secreta (service_role / sb_secret_...).
+// Enquanto ficarem vazias, o login continua só neste navegador, como antes.
+export const SUPABASE_URL = '';
+export const SUPABASE_CHAVE_PUBLICA = '';

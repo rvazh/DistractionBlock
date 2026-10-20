@@ -1,0 +1,41 @@
+/* ===== Superação ===== */
+.vicio-form { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 14px; margin-top: 14px; align-items: end; }
+.vicio-form-motivo { grid-column: 1 / -1; }
+.vicio-form-botao { grid-column: 1 / -1; }
+.vicio-form input[type='date'] { color-scheme: inherit; }
+
+.vicio { display: flex; flex-direction: column; gap: 16px; }
+.vicio .card-head { margin-bottom: 0; }
+.vicio .card-head h2 { overflow-wrap: anywhere; }
+
+.vicio-contador { display: flex; align-items: flex-end; gap: 14px; }
+.vicio-contador b { font-family: var(--mono); font-size: 64px; font-weight: 500; line-height: 0.9; letter-spacing: -0.04em; }
+.vicio-contador span { display: grid; gap: 2px; color: var(--text); font-size: 15px; padding-bottom: 4px; }
+.vicio-contador small { color: var(--muted); font-size: 12px; }
+
+.vicio-meta { display: grid; gap: 6px; }
+.vicio-meta-linha { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); margin: 0; }
+.vicio-trilho { height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
+.vicio-trilho div { height: 100%; background: var(--white); border-radius: 2px; }
+
+.vicio-motivo { margin: 0; padding: 10px 14px; border-left: 2px solid var(--white); color: var(--text); font-size: 14px; background: var(--surface-2); }
+
+.vicio-dados { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; border: 1px solid var(--line); }
+.vicio-dados div { padding: 10px 12px; min-width: 0; }
+.vicio-dados div + div { border-left: 1px solid var(--line); }
+.vicio-dados dt { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.vicio-dados dd { margin: 4px 0 0; font-family: var(--mono); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.vicio-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.vicio-acoes .vicio-apagar { margin-left: auto; color: var(--muted); }
+.vicio-acoes .vicio-apagar:hover { color: var(--alert); }
+
+.vicio-historico { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.vicio-historico li { display: grid; grid-template-columns: 90px 1fr auto; gap: 12px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.vicio-historico time { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.vicio-historico i { color: var(--dim); }
+
+@media (max-width: 760px) {
+  .vicio-form { grid-template-columns: 1fr; }
+  .vicio-contador b { font-size: 52px; }
+}

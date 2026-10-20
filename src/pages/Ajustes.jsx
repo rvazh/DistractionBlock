@@ -110,7 +110,7 @@ function MinhaConta() {
     <div className="card" id="conta">
       <div className="card-head">
         <h2>Minha conta</h2>
-        <span className={'pill' + (semConta ? ' alert' : ' solid')}>{semConta ? 'Incompleta' : 'Neste navegador'}</span>
+        <span className={'pill' + (semConta ? ' alert' : ' solid')}>{semConta ? 'Incompleta' : S.nuvem ? 'Na nuvem' : 'Neste navegador'}</span>
       </div>
       {semConta ? (
         <>
@@ -120,7 +120,7 @@ function MinhaConta() {
       ) : (
         <form className="form-grid" onSubmit={salvar}>
           <input className="input" aria-label="Nome" placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
-          <input className="input" type="email" aria-label="E-mail" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input className="input" type="email" aria-label="E-mail" placeholder="E-mail" value={email} readOnly={S.nuvem} title={S.nuvem ? 'O e-mail é o do login e não muda por aqui.' : undefined} onChange={(e) => setEmail(e.target.value)} />
           <div><button className="btn" type="submit">Salvar</button></div>
           <p className="form-error">{erro}</p>
         </form>

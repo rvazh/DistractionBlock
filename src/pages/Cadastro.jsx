@@ -18,6 +18,25 @@ export default function Cadastro() {
   const [entendi, setEntendi] = useState(false);
   const [erro, setErro] = useState('');
   const [ocupado, setOcupado] = useState(false);
+  const [enviadoPara, setEnviadoPara] = useState(''); // e-mail que precisa ser confirmado
+  const [reenviado, setReenviado] = useState(false);
+
+  // Conta criada na nuvem: falta abrir o link que chegou por e-mail
+  if (enviadoPara) {
+    return (
+      <Acesso rotulo="Criar conta" titulo="Confirme o seu e-mail." texto={`Enviamos um link para ${enviadoPara}. Abra o e-mail e clique no link: você volta para cá já com a conta confirmada.`}>
+        <div className="acesso-aviso">
+          {reenviado
+            ? 'Enviamos de novo. Olhe também a caixa de spam e as promoções.'
+            : <>Não chegou em alguns minutos? <button type="button" className="link-botao" onClick={async () => {
+                try { await acoes.reenviarConfirmacao(enviadoPara); setReenviado(true); } catch (x) { setErro(x.message); }
+              }}>Reenviar o link</button></>}
+        </div>
+        <p className="form-error" role="alert">{erro}</p>
+        <Link className="btn primary acesso-criar" to="/entrar" state={location.state}>Já confirmei: entrar</Link>
+      </Acesso>
+    );
+  }
 
   if (S.account && S.logado) return <Navigate to={destino} replace />;
   // Uma conta por navegador: se já existe, explica e leva para Entrar
@@ -39,7 +58,12 @@ export default function Cadastro() {
     }
     setOcupado(true);
     try {
-      await acoes.criarConta({ name: nome, email, password: senha }, true);
+      const r = await acoes.criarConta({ name: nome, email, password: senha }, true);
+      if (r && r.precisaConfirmar) {
+        setEnviadoPara(r.email);
+        setOcupado(false);
+        return;
+      }
       navigate(destino, { replace: true });
     } catch (x) {
       setErro(x.message);
@@ -86,7 +110,11 @@ export default function Cadastro() {
       <p className="acesso-rodape">
         Já tem conta? <Link to="/entrar" state={location.state}>Entrar</Link>
       </p>
-      <p className="acesso-dica" style={{ marginTop: 10 }}>A conta fica só neste navegador, sem servidor.</p>
+      <p className="acesso-dica" style={{ marginTop: 10 }}>
+        {S.nuvem
+          ? 'A conta (nome, e-mail e o que você guardar em Superação) fica no servidor, protegida. Os bloqueios ficam neste navegador.'
+          : 'A conta fica só neste navegador, sem servidor.'}
+      </p>
     </Acesso>
   );
 }

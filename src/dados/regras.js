@@ -126,25 +126,60 @@ export async function createAccount(state, info, now = Date.now()) {
   return state.account;
 }
 
-export async function login(state, info, now = Date.now()) {
-  if (!state.passwordHash) throw new Error('Crie a sua conta primeiro.');
+// Trava de 5 minutos depois de 5 tentativas erradas (vale também para o login na nuvem)
+export function checkLoginLock(state, now = Date.now()) {
   const lock = state.loginLock;
   if (lock && lock.until && now < lock.until) {
     const min = Math.ceil((lock.until - now) / 60000);
     throw new Error(`Muitas tentativas erradas. Tente de novo em ${min} ${min === 1 ? 'minuto' : 'minutos'}.`);
   }
+}
+// Conta uma tentativa errada e devolve a mensagem para mostrar
+export function registerLoginFail(state, now = Date.now()) {
+  const lock = state.loginLock;
+  const fails = ((lock && !lock.until ? lock.fails : 0) || 0) + 1;
+  state.loginLock = fails >= MAX_TENTATIVAS ? { fails: 0, until: now + ESPERA_LOGIN_MS } : { fails, until: null };
+  const restam = MAX_TENTATIVAS - fails;
+  return fails >= MAX_TENTATIVAS
+    ? 'Muitas tentativas erradas. Tente de novo em 5 minutos.'
+    : `E-mail ou senha incorretos.${restam <= 2 ? ` Restam ${restam} ${restam === 1 ? 'tentativa' : 'tentativas'}.` : ''}`;
+}
+
+export async function login(state, info, now = Date.now()) {
+  if (!state.passwordHash) throw new Error('Crie a sua conta primeiro.');
+  checkLoginLock(state, now);
   const emailOk = !state.account || normEmail(info && info.email) === state.account.email;
   const senhaOk = await verifyPassword(String((info && info.password) || ''), state.passwordHash);
-  if (!emailOk || !senhaOk) {
-    const fails = ((lock && !lock.until ? lock.fails : 0) || 0) + 1;
-    state.loginLock = fails >= MAX_TENTATIVAS ? { fails: 0, until: now + ESPERA_LOGIN_MS } : { fails, until: null };
-    const restam = MAX_TENTATIVAS - fails;
-    throw new Error(fails >= MAX_TENTATIVAS
-      ? 'Muitas tentativas erradas. Tente de novo em 5 minutos.'
-      : `E-mail ou senha incorretos.${restam <= 2 ? ` Restam ${restam} ${restam === 1 ? 'tentativa' : 'tentativas'}.` : ''}`);
-  }
+  if (!emailOk || !senhaOk) throw new Error(registerLoginFail(state, now));
   state.loginLock = null;
   return true;
+}
+
+// Confere nome, e-mail e senha antes de criar a conta (na nuvem ou só aqui)
+export function validateAccountInput(info) {
+  const name = String((info && info.name) || '').trim();
+  if (name.length < 2) return 'Informe o seu nome.';
+  if (!validEmail(normEmail(info && info.email))) return 'E-mail inválido.';
+  return validateNewPassword(String((info && info.password) || ''));
+}
+
+// Liga este navegador à conta da nuvem (Supabase) que acabou de entrar.
+// Um navegador guarda uma conta só: se já for de outro e-mail, recusa.
+// A senha de controle (que confirma as liberações) passa a ser a senha do login.
+export async function linkCloudAccount(state, { uid, name, email }, password, now = Date.now()) {
+  const mail = normEmail(email);
+  const acc = state.account;
+  if (acc && ((acc.nuvemId && acc.nuvemId !== uid) || (!acc.nuvemId && acc.email !== mail))) {
+    throw new Error(`Este navegador já está com a conta ${acc.email}. Entre com ela.`);
+  }
+  if (password && !(state.passwordHash && (await verifyPassword(password, state.passwordHash)))) {
+    state.passwordHash = await hashPassword(password);
+  }
+  if (!state.passwordHash) throw new Error('Entre com a sua senha para terminar.');
+  const nome = String(name || (acc && acc.name) || mail.split('@')[0]).trim().slice(0, 60);
+  state.account = { name: nome, email: mail, createdAt: (acc && acc.createdAt) || now, nuvemId: uid };
+  state.loginLock = null;
+  return state.account;
 }
 
 export function updateAccount(state, info) {
@@ -443,7 +478,7 @@ export function stats(state, now = Date.now()) {
 export function publicState(state, extra = {}, now = Date.now()) {
   return {
     hasPassword: !!state.passwordHash,
-    account: state.account ? { name: state.account.name, email: state.account.email, createdAt: state.account.createdAt } : null,
+    account: state.account ? { name: state.account.name, email: state.account.email, createdAt: state.account.createdAt, nuvem: !!state.account.nuvemId } : null,
     lists: state.lists,
     customMessages: state.customMessages,
     disabledDefaults: state.disabledDefaults,

@@ -46,6 +46,7 @@
 .acesso-ou { display: flex; align-items: center; gap: 12px; margin: 22px 0 14px; color: var(--dim); font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .12em; }
 .acesso-ou::before, .acesso-ou::after { content: ''; flex: 1; border-top: 1px solid var(--line); }
 .acesso-caixa .acesso-criar { width: 100%; height: 46px; font-size: 15px; justify-content: center; }
+.acesso-aviso.ok { border-color: var(--white); color: var(--text); margin-bottom: 18px; }
 .acesso-aviso { border: 1px solid var(--line-strong); padding: 12px 14px; color: var(--muted); font-size: 13px; margin: 0; }
 
 @media (max-width: 860px) {
