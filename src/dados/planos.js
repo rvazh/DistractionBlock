@@ -15,7 +15,7 @@ export const PLANOS = [
     itens: [
       `Até ${LIMITES_GRATIS.sites} sites bloqueados`,
       `Até ${LIMITES_GRATIS.words} palavras pesquisadas`,
-      `Até ${LIMITES_GRATIS.apps} apps do Windows (quando chegar)`,
+      `Até ${LIMITES_GRATIS.apps} apps bloqueados`,
       'Prazo de espera ajustável',
       'Pessoa de confiança',
       'Mensagens de melhora padrão',

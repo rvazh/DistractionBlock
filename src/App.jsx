@@ -9,7 +9,6 @@ import Painel from './pages/Painel.jsx';
 import Bloqueios from './pages/Bloqueios.jsx';
 import Liberacoes from './pages/Liberacoes.jsx';
 import Mensagens from './pages/Mensagens.jsx';
-import Superacao from './pages/Superacao.jsx';
 import Ajustes from './pages/Ajustes.jsx';
 import BotaoAtendimento from './components/BotaoAtendimento.jsx';
 
@@ -38,7 +37,6 @@ export default function App() {
         <Route index element={<Painel />} />
         <Route path="bloqueios" element={<Bloqueios />} />
         <Route path="liberacoes" element={<Liberacoes />} />
-        <Route path="superacao" element={<Superacao />} />
         <Route path="mensagens" element={<Mensagens />} />
         <Route path="ajustes" element={<Ajustes />} />
       </Route>

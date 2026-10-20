@@ -164,28 +164,3 @@ test('total geral de bloqueios não some com o tempo', () => {
   const velho = R.migrate({ events: [{ t: t0, type: 'site', target: 'x' }, { t: t0, type: 'word', target: 'y' }] });
   assert.deepEqual(velho.totals, { site: 1, word: 1 });
 });
-
-test('superação: dias sem recair, recorde e próxima meta', async () => {
-  const S = await import('../src/dados/superacao.js');
-  const v = { inicio: '2026-09-01', recaidas: [{ quando: '2026-09-20' }, { quando: '2026-10-10' }] };
-  const r = S.resumoVicio(v, '2026-10-19');
-  assert.equal(r.dias, 9);            // desde a última recaída (10/10)
-  assert.equal(r.desde, '2026-10-10');
-  assert.equal(r.recorde, 20);        // de 20/09 a 10/10
-  assert.equal(r.totalRecaidas, 2);
-  assert.equal(r.meta, 14);
-  assert.equal(r.faltam, 5);
-  assert.equal(r.ehRecorde, false);
-  // sem recaídas: conta desde o início e é recorde
-  const s = S.resumoVicio({ inicio: '2026-10-19', recaidas: [] }, '2026-10-19');
-  assert.equal(s.dias, 0);
-  assert.equal(s.meta, 1);
-  const t = S.resumoVicio({ inicio: '2026-09-19', recaidas: [] }, '2026-10-19');
-  assert.equal(t.dias, 30);
-  assert.equal(t.ehRecorde, true);
-  assert.equal(t.meta, 60);
-  // recaída no mesmo dia zera
-  assert.equal(S.resumoVicio({ inicio: '2026-10-01', recaidas: [{ quando: '2026-10-19' }] }, '2026-10-19').dias, 0);
-  assert.equal(S.diasEntre('2026-02-28', '2026-03-01'), 1);
-  assert.equal(S.formatarData('2026-10-07'), '07/10/2026');
-});

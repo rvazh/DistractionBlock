@@ -1,11 +1,10 @@
-// ===== Nuvem (Supabase): login de verdade e os dados de superação =====
+// ===== Nuvem (Supabase): login de verdade =====
 //
 // Como funciona:
 // 1. O login (e-mail e senha) é feito pelo Supabase Auth.
 // 2. Os bloqueios, as listas e a senha de controle continuam neste navegador (armazenamento.js),
 //    porque é a extensão daqui que bloqueia. A senha de controle é a mesma do login.
-// 3. A tela Superação (vícios e recaídas) lê e grava direto no Supabase, nas tabelas
-//    "vicios" e "recaidas" (veja supabase/01_estrutura.sql).
+// 3. O nome fica na tabela "perfis" (veja supabase/01_estrutura.sql).
 //
 // A chave publicável PODE ficar no site: quem protege os dados são as regras (RLS) do banco,
 // que só deixam cada pessoa ler e mudar as próprias linhas. A chave secreta NUNCA entra aqui.
@@ -93,8 +92,6 @@ export function traduzirErro(erro) {
     invalid_credentials: 'E-mail ou senha incorretos.',
   };
   if (mensagens[codigo]) return mensagens[codigo];
-  if (texto.includes('limite_vicios')) return 'Você chegou ao limite de 30 vícios na conta.';
-  if (texto.includes('limite_recaidas')) return 'Você chegou ao limite de recaídas guardadas na conta.';
   if (texto.includes('already registered')) return mensagens.user_already_exists;
   if (texto.includes('invalid login')) return mensagens.invalid_credentials;
   if (texto.includes('email not confirmed')) return mensagens.email_not_confirmed;
@@ -230,49 +227,4 @@ export async function iniciar(aoMudar) {
     if (mudou || evento === 'SIGNED_OUT') aoMudar(novo);
   });
   return usuario;
-}
-
-// ===== Superação: vícios e recaídas =====
-const CAMPOS_VICIO = 'id, nome, motivo, inicio, criado_em, recaidas (id, quando, nota, criado_em)';
-
-export async function listarVicios() {
-  exigirNuvem();
-  const { data, error } = await supabase
-    .from('vicios')
-    .select(CAMPOS_VICIO)
-    .order('criado_em', { ascending: true })
-    .order('quando', { referencedTable: 'recaidas', ascending: false });
-  if (error) throw falha(error);
-  return data || [];
-}
-
-export async function criarVicio({ nome, motivo, inicio }) {
-  exigirNuvem();
-  const { data, error } = await supabase.from('vicios').insert({ nome, motivo, inicio }).select(CAMPOS_VICIO).single();
-  if (error) throw falha(error);
-  return data;
-}
-
-export async function editarVicio(id, campos) {
-  exigirNuvem();
-  const { error } = await supabase.from('vicios').update(campos).eq('id', id);
-  if (error) throw falha(error);
-}
-
-export async function apagarVicio(id) {
-  exigirNuvem();
-  const { error } = await supabase.from('vicios').delete().eq('id', id);
-  if (error) throw falha(error);
-}
-
-export async function registrarRecaida(vicioId, { quando, nota }) {
-  exigirNuvem();
-  const { error } = await supabase.from('recaidas').insert({ vicio_id: vicioId, quando, nota });
-  if (error) throw falha(error);
-}
-
-export async function apagarRecaida(id) {
-  exigirNuvem();
-  const { error } = await supabase.from('recaidas').delete().eq('id', id);
-  if (error) throw falha(error);
 }

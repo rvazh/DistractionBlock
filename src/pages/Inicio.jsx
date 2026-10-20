@@ -159,7 +159,7 @@ export default function Inicio() {
         <div className="inicio-regra-grade">
           <div><span className="mono">01 · Bloquear</span><strong>Na hora.</strong><p>Adicionou um site ou uma palavra? Já está valendo.</p></div>
           <div><span className="mono">02 · Liberar</span><strong>7 dias.</strong><p>Você faz o pedido, espera uma semana e confirma com a senha. Prefere outro prazo? Escolha em Ajustes.</p></div>
-          <div><span className="mono">03 · Desistir</span><strong>Na hora.</strong><p>A vontade passou? Cancele o pedido e siga bloqueado.</p></div>
+          <div><span className="mono">03 · Desistir</span><strong>Só no fim.</strong><p>Desistir do bloqueio só quando o prazo acabar ou a pessoa de confiança liberar.</p></div>
         </div>
       </section>
 

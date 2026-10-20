@@ -32,11 +32,11 @@ No primeiro acesso você cria a conta; depois entra com e-mail e senha. A senha 
 - Ainda não existe cobrança: com `COBRANCA_ATIVA = false` (em `src/config.js`) nada é travado. Preço e limites também ficam em `src/config.js`.
 - **Estilos** (Ajustes): tema escuro ou claro, cor de destaque e imagem de fundo. Valem só no painel, depois do login. A imagem é reduzida e guardada no navegador.
 
-## Login na nuvem e Superação (Supabase)
+## Login na nuvem (Supabase)
 
-O login e a tela **Superação** (vícios, dias sem recair, recorde e recaídas) ficam no Supabase. Bloqueios, listas e a senha de controle continuam no navegador, porque é a extensão dele que bloqueia.
+O login (nome, e-mail e senha) fica no Supabase. Bloqueios, listas e a senha de controle continuam no navegador, porque é a extensão dele que bloqueia.
 
-1. No projeto do Distraction Block no Supabase: **SQL Editor → New query**, cole `supabase/01_estrutura.sql` e clique em **Run** (uma vez só).
+1. No projeto do Distraction Block no Supabase: **SQL Editor → New query**, cole `supabase/01_estrutura.sql` e clique em **Run** (uma vez só). Se você já tinha rodado a versão antiga, com vícios e recaídas, rode também `supabase/02_remover_superacao.sql`.
 2. **Project Settings → API**: copie o *Project URL* e a *Publishable key* (`sb_publishable_...`) para `SUPABASE_URL` e `SUPABASE_CHAVE_PUBLICA` em `src/config.js`. Nunca use a chave secreta.
 3. **Authentication → URL Configuration**: *Site URL* = `https://rvazh.github.io/DistractionBlock/`; em *Redirect URLs* adicione também `http://localhost:5173/**`.
 4. **E-mails de confirmação**: o servidor de e-mail padrão do Supabase é bem limitado. Configure o SMTP do Brevo em **Authentication → Emails → SMTP Settings** (como no CIFRA) ou, só para testar, desligue *Confirm email* em **Authentication → Sign In / Providers → Email**.

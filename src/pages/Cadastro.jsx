@@ -112,7 +112,7 @@ export default function Cadastro() {
       </p>
       <p className="acesso-dica" style={{ marginTop: 10 }}>
         {S.nuvem
-          ? 'A conta (nome, e-mail e o que você guardar em Superação) fica no servidor, protegida. Os bloqueios ficam neste navegador.'
+          ? 'A conta (nome e e-mail) fica no servidor, protegida. Os bloqueios ficam neste navegador.'
           : 'A conta fica só neste navegador, sem servidor.'}
       </p>
     </Acesso>

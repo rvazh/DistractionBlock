@@ -8,9 +8,8 @@ const MENU = [
   { to: '/painel', num: '01', label: 'Painel', end: true },
   { to: '/painel/bloqueios', num: '02', label: 'Bloqueios', contagem: 'bloqueios' },
   { to: '/painel/liberacoes', num: '03', label: 'Liberações', contagem: 'prontos' },
-  { to: '/painel/superacao', num: '04', label: 'Superação' },
-  { to: '/painel/mensagens', num: '05', label: 'Mensagens' },
-  { to: '/painel/ajustes', num: '06', label: 'Ajustes' },
+  { to: '/painel/mensagens', num: '04', label: 'Mensagens' },
+  { to: '/painel/ajustes', num: '05', label: 'Ajustes' },
 ];
 
 // Menu à esquerda (no celular vira uma barra no topo) + a tela aberta no lado direito
