@@ -29,6 +29,19 @@ export function firstName(n) { return String(n || '').trim().split(/\s+/)[0] || 
 export function initials(n) {
   return String(n || '?').trim().split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('');
 }
+// WhatsApp: mostra 5511912345678 como (11) 91234-5678 e monta o link com a mensagem pronta
+export function fmtTelefone(d) {
+  const n = String(d || '');
+  if (n.startsWith('55') && (n.length === 12 || n.length === 13)) {
+    const ddd = n.slice(2, 4); const resto = n.slice(4);
+    return `(${ddd}) ${resto.slice(0, resto.length - 4)}-${resto.slice(-4)}`;
+  }
+  return n ? `+${n}` : '';
+}
+export function whatsapp(numero, texto) {
+  return `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+}
+
 export function mailto(email, subject, body) {
   return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

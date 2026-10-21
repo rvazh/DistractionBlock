@@ -164,3 +164,18 @@ test('total geral de bloqueios não some com o tempo', () => {
   const velho = R.migrate({ events: [{ t: t0, type: 'site', target: 'x' }, { t: t0, type: 'word', target: 'y' }] });
   assert.deepEqual(velho.totals, { site: 1, word: 1 });
 });
+
+test('telefone da pessoa de confiança', async () => {
+  assert.equal(R.normPhone('(11) 91234-5678'), '5511912345678');
+  assert.equal(R.normPhone('11 3456-7890'), '551134567890');
+  assert.equal(R.normPhone('+55 11 91234-5678'), '5511912345678');
+  assert.equal(R.normPhone(''), '');
+  assert.equal(R.normPhone('1234'), null);
+  const s = R.defaultState();
+  await R.setTrusted(s, { name: 'Ana', email: 'ana@exemplo.com', phone: '(11) 91234-5678' });
+  assert.equal(s.trusted.phone, '5511912345678');
+  await assert.rejects(R.setTrusted(R.defaultState(), { name: 'Ana', email: 'ana@exemplo.com', phone: '123' }), /inválido/);
+  R.setTrustedPhone(s, '21 99876-5432');
+  assert.equal(R.publicState(s).trusted.phone, '5521998765432');
+  assert.throws(() => R.setTrustedPhone(s, 'abc12'), /inválido/);
+});

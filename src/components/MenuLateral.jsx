@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEstado } from '../contexto/Estado.jsx';
-import logo from '../assets/logo-branca.png';
+import TrocarApp from './TrocarApp.jsx';
 import './MenuLateral.css';
 
 const MENU = [
@@ -53,10 +53,7 @@ export default function MenuLateral() {
         </div>
       )}
       <aside className="sidebar">
-        <Link className="brand" to="/" title="Ir para o site">
-          <img src={logo} alt="" />
-          <div><b>Distraction</b><b>Block</b></div>
-        </Link>
+        <TrocarApp />
         <nav className="nav" aria-label="Principal">
           {MENU.map((m) => (
             <NavLink key={m.to} to={m.to} end={m.end} className={({ isActive }) => (isActive ? 'active' : '')}>

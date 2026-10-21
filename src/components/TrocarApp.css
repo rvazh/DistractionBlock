@@ -1,0 +1,44 @@
+/* ===== Logo do painel: escolher o app (Distraction Block ou CIFRA) ===== */
+.trocar-app { position: relative; }
+.trocar-app .brand {
+  width: 100%; border: 1px solid transparent; border-radius: var(--radius); background: none;
+  color: inherit; font: inherit; text-align: left; cursor: pointer; margin-bottom: 18px; padding: 4px 8px;
+}
+.trocar-app .brand:hover, .trocar-app .brand[aria-expanded='true'] { border-color: var(--line); background: var(--surface); }
+.trocar-app .brand-seta { margin-left: auto; color: var(--muted); transition: transform .15s; }
+.trocar-app .brand[aria-expanded='true'] .brand-seta { transform: rotate(180deg); }
+
+.apps-menu {
+  position: absolute; top: calc(100% - 10px); left: 0; z-index: 30;
+  width: 272px; padding: 12px; display: grid; gap: 6px;
+  background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--radius);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  animation: apps-entra .15s ease-out;
+}
+@keyframes apps-entra { from { opacity: 0; transform: translateY(-4px); } }
+.apps-menu > .tag { margin: 0 2px 4px; }
+
+.app-opcao {
+  display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: var(--radius);
+  border: 1px solid var(--line); background: var(--surface); color: var(--text); text-decoration: none;
+}
+.app-opcao:hover { border-color: var(--white); }
+.app-opcao.atual { border-color: var(--line-strong); }
+.app-icone { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; overflow: hidden; }
+.app-icone img { width: 100%; height: 100%; object-fit: contain; }
+.app-icone.escuro { background: #000; border: 1px solid #333; }
+.app-icone.claro { background: #fff; border: 2px solid #eaaf5a; padding: 4px; } /* borda dourada do CIFRA */
+.app-textos { display: grid; min-width: 0; }
+.app-textos b { font-size: 14px; font-weight: 600; }
+.app-textos small { font-size: 12px; color: var(--muted); }
+.app-marca { margin-left: auto; color: var(--muted); font-weight: 600; }
+.app-opcao.atual .app-marca { color: var(--white); }
+
+.apps-site { font-size: 12px; color: var(--muted); padding: 6px 2px 0; text-decoration: underline; text-underline-offset: 3px; }
+.apps-site:hover { color: var(--text); }
+
+@media (max-width: 760px) {
+  .trocar-app .brand { margin-bottom: 10px; }
+  .apps-menu { top: calc(100% - 4px); width: min(300px, calc(100vw - 32px)); }
+}
+@media (prefers-reduced-motion: reduce) { .apps-menu { animation: none; } }

@@ -300,6 +300,7 @@ export const acoes = {
   mudarPrazo: (dias) => mudar((s) => { exigirSenha(s); return R.setDelay(s, dias); }),
 
   adicionarPessoa: (dados) => mudar((s) => R.setTrusted(s, dados)),
+  mudarTelefonePessoa: (numero) => mudar((s) => R.setTrustedPhone(s, numero)),
   pedirRemocaoPessoa: () => mudar((s) => { exigirSenha(s); return R.requestTrustedRemoval(s); }),
   solicitarPermissao: (id) => mudar((s) => R.askApproval(s, id)),
   aprovarComCodigo: (id, codigo) => mudar((s) => R.approveWithCode(s, id, codigo)),

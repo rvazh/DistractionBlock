@@ -30,7 +30,7 @@
 .kv dt { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
 .kv dd { margin: 4px 0 0; font-family: var(--mono); font-size: 15px; }
 .perm-actions { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
-.trusted-form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.trusted-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
 .trusted-form .tf-actions { grid-column: 1 / -1; }
 .trusted-form .form-error { grid-column: 1 / -1; margin: 0; }
 .checks { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }

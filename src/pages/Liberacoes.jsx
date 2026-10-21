@@ -5,8 +5,9 @@ import { useEstado } from '../contexto/Estado.jsx';
 import { useUI } from '../contexto/UI.jsx';
 import Modal, { BotaoModal } from '../components/Modal.jsx';
 import { PageHead, Vazio } from '../components/Pecas.jsx';
+import { normPhone } from '../dados/regras.js';
 import { ConfirmarLiberacao, InserirCodigo, RegistrarNegacao } from '../components/Pedidos.jsx';
-import { diasDoPedido, firstName, fmtDate, fmtDateTime, fmtLeft, initials, LIST_NAMES, mailto, pedidoAberto, plural } from '../dados/formato.js';
+import { diasDoPedido, firstName, fmtDate, fmtDateTime, fmtLeft, fmtTelefone, initials, LIST_NAMES, mailto, pedidoAberto, plural, whatsapp } from '../dados/formato.js';
 import './Liberacoes.css';
 
 // Abre o programa de e-mail (ou o Gmail, se for o padrão do navegador)
@@ -27,10 +28,10 @@ export function TituloPedido({ r }) {
   return <>Liberar {LIST_NAMES[r.list] || ''} <code>{r.value}</code></>;
 }
 
-function emailAprovacao(S, r) {
+function textoAprovacao(S, r) {
   const t = S.trusted;
   const what = oQue(S, r);
-  const corpo = [
+  return [
     `Oi, ${firstName(t.name)}!`,
     '',
     `Pedi no Distraction Block para ${what}.`,
@@ -41,7 +42,19 @@ function emailAprovacao(S, r) {
     '',
     'Obrigado por me ajudar a manter o foco.'
   ].join('\n');
-  return mailto(t.email, `Distraction Block: posso ${what}?`, corpo);
+}
+
+function emailAprovacao(S, r) {
+  return mailto(S.trusted.email, `Distraction Block: posso ${oQue(S, r)}?`, textoAprovacao(S, r));
+}
+
+function whatsappAprovacao(S, r) {
+  return whatsapp(S.trusted.phone, textoAprovacao(S, r));
+}
+
+// Abre o WhatsApp numa aba nova (no celular, abre o app)
+function abrirWhatsApp(link) {
+  window.open(link, '_blank', 'noopener');
 }
 
 function emailCodigos(nome, codigos) {
@@ -60,12 +73,17 @@ function emailCodigos(nome, codigos) {
 }
 
 /* ---------- Janelas ---------- */
-function Codigos({ nome, email, codigos }) {
+function Codigos({ nome, email, telefone, codigos }) {
   return (
     <Modal tag="Códigos de aprovação" title={`Envie estes códigos para ${firstName(nome)}`} wide
       actions={<>
-        <BotaoModal kind="primary" fecha={false} onClick={() => abrirEmail(mailto(email, 'Distraction Block: você é minha pessoa de confiança', emailCodigos(nome, codigos)))}>
-          Abrir e-mail para {firstName(nome)}
+        {telefone && (
+          <BotaoModal kind="primary" fecha={false} onClick={() => abrirWhatsApp(whatsapp(telefone, emailCodigos(nome, codigos)))}>
+            Enviar pelo WhatsApp
+          </BotaoModal>
+        )}
+        <BotaoModal kind={telefone ? '' : 'primary'} fecha={false} onClick={() => abrirEmail(mailto(email, 'Distraction Block: você é minha pessoa de confiança', emailCodigos(nome, codigos)))}>
+          {telefone ? 'Enviar por e-mail' : `Abrir e-mail para ${firstName(nome)}`}
         </BotaoModal>
         <BotaoModal kind="ghost">Já enviei</BotaoModal>
       </>}>
@@ -92,6 +110,50 @@ function EscolherPedido({ pedidos, onEscolher }) {
           </li>
         ))}
       </ul>
+    </Modal>
+  );
+}
+
+function ComoPedir({ pedido, aoEscolher }) {
+  const { S } = useEstado();
+  const t = S.trusted;
+  return (
+    <Modal tag="Solicitar permissão" title={`Como pedir para ${firstName(t.name)}?`}
+      actions={<>
+        <BotaoModal kind="primary" onClick={() => aoEscolher(pedido, 'whatsapp')}>WhatsApp</BotaoModal>
+        <BotaoModal onClick={() => aoEscolher(pedido, 'email')}>E-mail</BotaoModal>
+        <BotaoModal kind="ghost">Cancelar</BotaoModal>
+      </>}>
+      <p>A mensagem já vai pronta, com o que você quer liberar e a data do prazo. {firstName(t.name)} responde com um código de aprovação, ou com NÃO.</p>
+      <p className="note">WhatsApp: {fmtTelefone(t.phone)} · E-mail: {t.email}</p>
+    </Modal>
+  );
+}
+
+function TelefonePessoa() {
+  const { S, acoes } = useEstado();
+  const { toast } = useUI();
+  const t = S.trusted;
+  const [numero, setNumero] = useState(t.phone ? fmtTelefone(t.phone) : '');
+  const [erro, setErro] = useState('');
+  return (
+    <Modal tag="Pessoa de confiança" title={`WhatsApp de ${firstName(t.name)}`}
+      actions={<>
+        <BotaoModal kind="primary" onClick={async () => {
+          try {
+            await acoes.mudarTelefonePessoa(numero);
+            toast(numero.trim() ? 'Número salvo.' : 'Número removido.');
+            return true;
+          } catch (e) { setErro(e.message); return false; }
+        }}>Salvar</BotaoModal>
+        <BotaoModal kind="ghost">Cancelar</BotaoModal>
+      </>}>
+      <p>Com o número, dá para pedir a permissão e mandar os códigos pelo WhatsApp. Deixe vazio para tirar.</p>
+      <label className="field">
+        <span className="tag">WhatsApp (com DDD)</span>
+        <input className="input" type="tel" inputMode="tel" autoFocus placeholder="(11) 91234-5678" value={numero} onChange={(e) => setNumero(e.target.value)} />
+      </label>
+      <p className="form-error">{erro}</p>
     </Modal>
   );
 }
@@ -131,15 +193,16 @@ function FormPessoa() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [rel, setRel] = useState('');
+  const [tel, setTel] = useState('');
   const [erro, setErro] = useState('');
 
   async function enviar(e) {
     e.preventDefault();
     setErro('');
     try {
-      const codigos = await acoes.adicionarPessoa({ name: nome, email, relation: rel });
-      abrirModal(<Codigos nome={nome} email={email.trim()} codigos={codigos} />);
-      setNome(''); setEmail(''); setRel('');
+      const codigos = await acoes.adicionarPessoa({ name: nome, email, phone: tel, relation: rel });
+      abrirModal(<Codigos nome={nome} email={email.trim()} telefone={normPhone(tel) || ''} codigos={codigos} />);
+      setNome(''); setEmail(''); setRel(''); setTel('');
     } catch (x) { setErro(x.message); }
   }
 
@@ -150,6 +213,9 @@ function FormPessoa() {
       </label>
       <label className="field"><span className="tag">E-mail</span>
         <input className="input" type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
+      </label>
+      <label className="field"><span className="tag">WhatsApp</span>
+        <input className="input" type="tel" inputMode="tel" placeholder="Opcional, ex.: (11) 91234-5678" value={tel} onChange={(e) => setTel(e.target.value)} />
       </label>
       <label className="field"><span className="tag">Relação</span>
         <input className="input" placeholder="Opcional, ex.: amigo, irmã" value={rel} onChange={(e) => setRel(e.target.value)} />
@@ -170,12 +236,19 @@ export default function Liberacoes() {
   const remocao = abertos.find((r) => r.kind === 'trusted');
   const tn = t ? firstName(t.name) : '';
 
-  async function solicitar(r) {
+  async function enviarPedido(r, canal) {
     try {
       await acoes.solicitarPermissao(r.id);
-      abrirEmail(emailAprovacao(S, r));
-      toast(`E-mail aberto. Agora é com ${firstName(S.trusted.name)}.`);
+      if (canal === 'whatsapp') abrirWhatsApp(whatsappAprovacao(S, r));
+      else abrirEmail(emailAprovacao(S, r));
+      toast(`${canal === 'whatsapp' ? 'WhatsApp' : 'E-mail'} aberto. Agora é com ${firstName(S.trusted.name)}.`);
     } catch (e) { toast(e.message, true); }
+  }
+
+  // Com o número cadastrado, pergunta se vai pelo WhatsApp ou por e-mail
+  function solicitar(r) {
+    if (S.trusted && S.trusted.phone) return abrirModal(<ComoPedir pedido={r} aoEscolher={enviarPedido} />);
+    return enviarPedido(r, 'email');
   }
 
   function solicitarPermissao() {
@@ -221,7 +294,11 @@ export default function Liberacoes() {
                   {t.relation && <span className="pill">{t.relation}</span>}
                   <span className="pill solid">Pessoa de confiança</span>
                 </div>
-                <span className="perm-sub">{t.email}</span>
+                <span className="perm-sub">
+                  {t.email}
+                  {t.phone ? <> · WhatsApp {fmtTelefone(t.phone)}</> : null}
+                  {' '}<button type="button" className="link-botao" onClick={() => abrirModal(<TelefonePessoa />)}>{t.phone ? 'trocar número' : '+ adicionar número'}</button>
+                </span>
                 <dl className="kv">
                   <div><dt>Desde</dt><dd>{fmtDate(t.addedAt)}</dd></div>
                   <div><dt>Códigos restantes</dt><dd>{t.codesLeft} de {t.codesTotal}</dd></div>

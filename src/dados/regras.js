@@ -300,16 +300,36 @@ function makeCode() {
 }
 function validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(e || '').trim()); }
 
+// Telefone (WhatsApp) da pessoa de confiança: só dígitos, com 55 do Brasil quando vier só DDD + número.
+// Devolve '' para vazio e null para inválido.
+export function normPhone(input) {
+  let d = String(input || '').replace(/\D/g, '');
+  if (!d) return '';
+  if (d.startsWith('00')) d = d.slice(2);
+  if (d.length === 10 || d.length === 11) d = '55' + d; // (11) 91234-5678 → 5511912345678
+  return d.length >= 12 && d.length <= 15 ? d : null;
+}
+
+export function setTrustedPhone(state, input) {
+  if (!state.trusted) throw new Error('Não há pessoa de confiança cadastrada.');
+  const phone = normPhone(input);
+  if (phone === null) throw new Error('Número inválido. Use DDD + número, ex.: (11) 91234-5678.');
+  state.trusted.phone = phone;
+  return phone;
+}
+
 export async function setTrusted(state, info, now = Date.now()) {
   if (state.trusted) throw new Error('Já existe uma pessoa de confiança. Para trocar, peça a remoção dela.');
   const name = String((info && info.name) || '').trim().slice(0, 60);
   const email = String((info && info.email) || '').trim().toLowerCase();
   const relation = String((info && info.relation) || '').trim().slice(0, 40);
+  const phone = normPhone(info && info.phone);
   if (name.length < 2) throw new Error('Informe o nome da pessoa.');
   if (!validEmail(email)) throw new Error('E-mail inválido.');
+  if (phone === null) throw new Error('Número inválido. Use DDD + número, ex.: (11) 91234-5678.');
   const codes = Array.from({ length: CODES_PER_PERSON }, makeCode);
   const hashes = await Promise.all(codes.map(hashCode));
-  state.trusted = { name, email, relation, addedAt: now, codes: hashes.map((h) => ({ h, used: false })), approvals: 0, denials: 0 };
+  state.trusted = { name, email, phone, relation, addedAt: now, codes: hashes.map((h) => ({ h, used: false })), approvals: 0, denials: 0 };
   return codes;
 }
 
@@ -485,6 +505,7 @@ export function publicState(state, extra = {}, now = Date.now()) {
     trusted: state.trusted ? {
       name: state.trusted.name,
       email: state.trusted.email,
+      phone: state.trusted.phone || '',
       relation: state.trusted.relation,
       addedAt: state.trusted.addedAt,
       codesLeft: codesLeft(state),
