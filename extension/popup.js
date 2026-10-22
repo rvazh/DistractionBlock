@@ -1,4 +1,5 @@
 (async function () {
+  document.getElementById('versao').textContent = `Versão ${chrome.runtime.getManifest().version}`;
   const { config, lastSync, incognito } = await chrome.storage.local.get(['config', 'lastSync', 'incognito']);
   const c = config || { sites: [], words: [] };
   document.getElementById('sites').textContent = c.sites.length;

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Distraction Block",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Bloqueia os sites e as pesquisas que você definir no site do Distraction Block.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA52Un6tJ6RS2SlL+OmAQIBLFIKpdVYd+tXGymL/B/bRZXHv5EH58ecVws6hTFcNKzQoFquXKJUlWI13cq+umvb67+WD1/fmkWYp442sOo3HQoDXkI/CJva1LC4pK0C1rbxFX2tiAWNbxKdU9aPtppzeJhmrCYjoRIe/jFwdOzQJxAXdEVNRV/CpeLbzbsKW7rBptS2Fg3E9H2oAjvOY8g3BRLqA5ACeKU4fgLop4QKyB82JqVJIhUdTSrcs8XjrTfkelqN/7/Q7V/LsbixQfYKQ0VR8vGxYxec677wC+wy6SbeNKwN4C5NDJUIjnfQQJWUhU20MzWC3OqOPZulCL3MQIDAQAB",
   "icons": {
@@ -46,6 +46,18 @@
       "matches": [
         "<all_urls>"
       ]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://distractionblock.vercel.app/*",
+        "https://rvazh.github.io/*",
+        "http://localhost/*",
+        "http://127.0.0.1/*"
+      ],
+      "js": ["ponte.js"],
+      "run_at": "document_start"
     }
   ],
   "externally_connectable": {

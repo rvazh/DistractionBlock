@@ -80,44 +80,59 @@ async function registrar(type, target) {
   await chrome.storage.local.set({ pending: pending.slice(-500) });
 }
 
-chrome.runtime.onMessage.addListener((msg) => {
+// Mensagens de dentro da extensão: a tela de bloqueio e a ponte que roda nas páginas do site (ponte.js)
+const SITES_DO_PAINEL = ['https://distractionblock.vercel.app', 'https://rvazh.github.io', 'http://localhost', 'http://127.0.0.1'];
+function ehDoPainel(sender) {
+  const origem = (sender && (sender.origin || (sender.url && new URL(sender.url).origin))) || '';
+  return SITES_DO_PAINEL.some((s) => origem === s || origem.startsWith(s + ':'));
+}
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg && msg.type === 'blocked' && msg.t === 'site') registrar('site', msg.v);
+  if (msg && msg.__doSite && ehDoPainel(sender)) {
+    tratarDoSite(msg.msg).then(sendResponse, () => sendResponse({ ok: false }));
+    return true; // resposta assíncrona
+  }
 });
 
 /* ---------- Conversa com o site ---------- */
 function lista(v, max) { return Array.isArray(v) ? v.slice(0, max).map(String) : []; }
 
+// O que o site pede: ping (status), config (as listas) e events (bloqueios que aconteceram)
+async function tratarDoSite(msg) {
+  if (!msg || typeof msg !== 'object') return { ok: false };
+
+  if (msg.type === 'ping') {
+    let incognito = false;
+    try { incognito = await chrome.extension.isAllowedIncognitoAccess(); } catch (e) { /* ignora */ }
+    await chrome.storage.local.set({ incognito, lastSeen: Date.now() });
+    return { ok: true, browser: browserKey(), incognito, version: VERSION };
+  }
+
+  if (msg.type === 'config') {
+    const c = msg.config || {};
+    config = {
+      sites: lista(c.sites, 5000).map((x) => DBMatch.normSite(x)).filter(Boolean),
+      words: lista(c.words, 2000).map((x) => x.slice(0, 80)),
+      messages: lista(c.messages, 500).map((x) => x.slice(0, 240))
+    };
+    await chrome.storage.local.set({ config, lastSync: Date.now() });
+    await applySiteRules();
+    return { ok: true };
+  }
+
+  if (msg.type === 'events') {
+    const { pending = [] } = await chrome.storage.local.get('pending');
+    await chrome.storage.local.set({ pending: [] });
+    return { events: pending };
+  }
+
+  return { ok: false };
+}
+
+// Caminho direto (externally_connectable), usado quando a ponte não está na página
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
-  (async () => {
-    if (!msg || typeof msg !== 'object') return sendResponse({ ok: false });
-
-    if (msg.type === 'ping') {
-      let incognito = false;
-      try { incognito = await chrome.extension.isAllowedIncognitoAccess(); } catch (e) { /* ignora */ }
-      await chrome.storage.local.set({ incognito, lastSeen: Date.now() });
-      return sendResponse({ ok: true, browser: browserKey(), incognito, version: VERSION });
-    }
-
-    if (msg.type === 'config') {
-      const c = msg.config || {};
-      config = {
-        sites: lista(c.sites, 5000).map((x) => DBMatch.normSite(x)).filter(Boolean),
-        words: lista(c.words, 2000).map((x) => x.slice(0, 80)),
-        messages: lista(c.messages, 500).map((x) => x.slice(0, 240))
-      };
-      await chrome.storage.local.set({ config, lastSync: Date.now() });
-      await applySiteRules();
-      return sendResponse({ ok: true });
-    }
-
-    if (msg.type === 'events') {
-      const { pending = [] } = await chrome.storage.local.get('pending');
-      await chrome.storage.local.set({ pending: [] });
-      return sendResponse({ events: pending });
-    }
-
-    sendResponse({ ok: false });
-  })();
+  tratarDoSite(msg).then(sendResponse, () => sendResponse({ ok: false }));
   return true; // resposta assíncrona
 });
 

@@ -9,6 +9,7 @@ import Estilos from '../components/Estilos.jsx';
 import { COBRANCA_ATIVA, PRECO_PRO, usoDoPlano } from '../dados/planos.js';
 import { abertoComoApp, aparelhoAtual, instalarApp, podeInstalar } from '../dados/instalar.js';
 import { REPO_URL } from '../config.js';
+import { diagnostico } from '../dados/extensao.js';
 import './Ajustes.css';
 
 function InstalarApp() {
@@ -45,6 +46,26 @@ function InstalarApp() {
       ) : (
         <p className="note">No Chrome ou no Edge, clique no ícone de instalar na barra de endereço (o monitor com uma seta) ou no menu <b>⋮ › Instalar Distraction Block</b>.</p>
       )}
+    </div>
+  );
+}
+
+// Quando a extensão não responde, explica o motivo mais provável
+function Diagnostico() {
+  const d = diagnostico();
+  let motivo;
+  if (d.ponte) {
+    motivo = <>A extensão <b>v{d.ponte}</b> está nesta página, mas não respondeu. Recarregue esta página (F5). Se continuar, recarregue a extensão em <code>brave://extensions</code> (ou <code>chrome://extensions</code>).</>;
+  } else if (d.direto) {
+    motivo = <>Há uma versão antiga da extensão neste navegador. Em <code>brave://extensions</code> (ou <code>chrome://extensions</code>), clique em <b>recarregar</b> na extensão Distraction Block, ou carregue de novo a pasta <code>extension</code> do projeto. A versão certa é a <b>1.0.2</b> ou mais nova.</>;
+  } else {
+    motivo = <>Nenhuma extensão do Distraction Block foi encontrada nesta página. Confira se ela está <b>instalada e ativada</b> neste navegador, na versão <b>1.0.2</b> ou mais nova, e recarregue esta página. Se já estava instalada, clique em <b>recarregar</b> nela ou carregue de novo a pasta <code>extension</code> do projeto.</>;
+  }
+  return (
+    <div className="diagnostico">
+      <span className="tag">Por que está desconectada?</span>
+      <p>{motivo}</p>
+      <p className="note">Endereço deste site: <code>{d.endereco}</code></p>
     </div>
   );
 }
@@ -178,7 +199,7 @@ export default function Ajustes() {
       <div className="card">
         <div className="card-head">
           <h2>Extensão do navegador</h2>
-          <span className={'pill' + (ext ? ' solid' : ' alert')}>{ext ? `Conectada · ${ext.nome}` : 'Desconectada'}</span>
+          <span className={'pill' + (ext ? ' solid' : ' alert')}>{ext ? `Conectada · ${ext.nome} · v${ext.versao}` : 'Desconectada'}</span>
         </div>
         <p className="sub">É ela que troca o site ou a pesquisa bloqueada pela tela de aviso. Sem ela, o Distraction Block só guarda as listas.</p>
         <ol className="steps">
@@ -189,6 +210,7 @@ export default function Ajustes() {
           <li>Em <b>Detalhes</b> da extensão, ative <b>Permitir no modo anônimo</b>.</li>
           <li>Volte para esta página e recarregue. O status muda para <b>Conectada</b>.</li>
         </ol>
+        {!ext && <Diagnostico />}
         {ext && !ext.incognito && (
           <p className="note aviso">Falta ativar "Permitir no modo anônimo": numa aba anônima, os bloqueios não valem.</p>
         )}

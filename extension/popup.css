@@ -12,3 +12,4 @@ header b { display: block; font-size: 15px; letter-spacing: .06em; text-transfor
 .foot { color: var(--dim); font-size: 12px; margin: 14px 0 0; }
 
 .foot a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.versao { opacity: .6; margin-top: 4px; }

@@ -12,3 +12,8 @@
 .uso-trilho div { height: 100%; background: var(--white); border-radius: 2px; }
 .uso li.passou .uso-linha b { color: var(--alert); }
 .uso li.passou .uso-trilho div { background: var(--alert); }
+
+/* Extensão desconectada: o motivo provável */
+.diagnostico { margin-top: 16px; padding: 12px 14px; border: 1px dashed var(--alert); border-radius: var(--radius); background: var(--alert-soft); }
+.diagnostico p { margin: 6px 0 0; font-size: 13px; color: var(--text); }
+.diagnostico .note { color: var(--muted); }
