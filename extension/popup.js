@@ -7,7 +7,7 @@
   st.textContent = lastSync ? 'Recebendo a lista do site' : 'Abra o site para sincronizar';
   st.className = 'tag ' + (lastSync ? 'on' : 'off');
   const warns = [];
-  if (!lastSync) warns.push('Abra o Distraction Block no navegador uma vez para a extensão receber as suas listas.');
+  if (!lastSync) warns.push('Abra o painel em distractionblock.vercel.app e entre na sua conta: a extensão recebe as listas na hora.');
   if (!incognito) warns.push('Ative "Permitir no modo anônimo" nos detalhes da extensão.');
   if (warns.length) {
     const w = document.getElementById('warn');

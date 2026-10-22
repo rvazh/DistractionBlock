@@ -1,6 +1,7 @@
 /*
  * Distraction Block — extensão (service worker)
- * - Recebe do site (rvazh.github.io/DistractionBlock) as listas de sites e palavras
+ * - Recebe do site (distractionblock.vercel.app ou rvazh.github.io/DistractionBlock) as listas de sites e palavras
+ *   (os endereços aceitos ficam em manifest.json → externally_connectable)
  * - Bloqueia sites com regras do declarativeNetRequest
  * - Bloqueia pesquisas que contenham palavras proibidas
  * - Guarda os bloqueios que aconteceram para o site mostrar no Painel

@@ -38,7 +38,7 @@ O login (nome, e-mail e senha) fica no Supabase. Bloqueios, listas e a senha de 
 
 1. No projeto do Distraction Block no Supabase: **SQL Editor → New query**, cole `supabase/01_estrutura.sql` e clique em **Run** (uma vez só). Se você já tinha rodado a versão antiga, com vícios e recaídas, rode também `supabase/02_remover_superacao.sql`.
 2. **Project Settings → API**: copie o *Project URL* e a *Publishable key* (`sb_publishable_...`) para `SUPABASE_URL` e `SUPABASE_CHAVE_PUBLICA` em `src/config.js`. Nunca use a chave secreta.
-3. **Authentication → URL Configuration**: *Site URL* = `https://rvazh.github.io/DistractionBlock/`; em *Redirect URLs* adicione também `http://localhost:5173/**`.
+3. **Authentication → URL Configuration**: *Site URL* = `https://distractionblock.vercel.app/`; adicione `https://rvazh.github.io/DistractionBlock/**` em *Redirect URLs*; em *Redirect URLs* adicione também `http://localhost:5173/**`.
 4. **E-mails de confirmação**: o servidor de e-mail padrão do Supabase é bem limitado. Configure o SMTP do Brevo em **Authentication → Emails → SMTP Settings** (como no CIFRA) ou, só para testar, desligue *Confirm email* em **Authentication → Sign In / Providers → Email**.
 
 Com `SUPABASE_URL` vazio, tudo funciona como antes (login só no navegador). Quem já tinha conta só no navegador entra normalmente: a conta é criada no servidor com o mesmo e-mail e senha.
@@ -85,7 +85,7 @@ Abra o endereço que aparecer (ex.: `http://localhost:5173`).
 4. Em **Detalhes** da extensão, ative **Permitir no modo anônimo**.
 5. Abra o site do Distraction Block: ele manda as listas para a extensão e o status muda para **Conectada**.
 
-A extensão tem um ID fixo (`elgkdjcphcnfdbalpioafiogblhfhnbc`) e só aceita listas de `rvazh.github.io` e `localhost`.
+A extensão tem um ID fixo (`elgkdjcphcnfdbalpioafiogblhfhnbc`) e só aceita listas de `distractionblock.vercel.app`, `rvazh.github.io` e `localhost` (em `extension/manifest.json`, campo `externally_connectable`). Se publicar o site em outro endereço, adicione-o lá e recarregue a extensão.
 Se publicar em outro endereço (ex.: Vercel), adicione-o em `externally_connectable` no `extension/manifest.json`.
 
 ## Editar o projeto
